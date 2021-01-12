@@ -1,0 +1,110 @@
+name: Scheduled NEURON CI
+
+on:
+  push:
+  schedule:
+    # Run at 2am every day
+    - cron:  '0 2 * * *'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci:
+    timeout-minutes: 45
+    runs-on: ${{ matrix.os.vm }}
+    container: ${{ matrix.os.container }}
+    name: ${{matrix.os.container || matrix.os.vm}}
+    env:
+      SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
+      OS_FLAVOUR: ${{matrix.os.flavour}}
+      OS_CONTAINER: ${{matrix.os.container}}
+      UNPRIVILEGED_USER: runner # User created+used inside Docker containers
+      SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 # Toolchain installed on CentOS7
+
+    strategy:
+      matrix:
+        os:
+        # GitHub Actions MacOS 11.0 runner: disable because this is just a
+        # preview that does not currently seem to be backed by many
+        # resources.
+        #- { vm: macos-11.0, flavour: macOS }
+        # GitHub Actions MacOS 10.15 runner
+        - { vm: macos-10.15, flavour: macOS }
+        # CentOS7 Docker image
+        - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
+        # CentOS8 Docker image
+        - { vm: ubuntu-latest, container: "centos:8", flavour: redhat }
+        # Fedora 32 Docker image
+        - { vm: ubuntu-latest, container: "fedora:32", flavour: redhat }
+        # Fedora Latest (33, at time of writing) Docker image
+        - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
+        # Ubuntu 18.04 Docker image
+        - { vm: ubuntu-latest, container: "ubuntu:18.04", flavour: debian }
+        # Ubuntu Latest (20.04, at time of writing) Docker image
+        - { vm: ubuntu-latest, container: "ubuntu:latest", flavour: debian }
+        # Debian stretch Docker image: disabled because there does not
+        # appear to be a supported way of getting a recent version of CMake
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=954852
+        # - { vm: ubuntu-latest, container: "debian:stretch", flavour: debian }
+        # Debian stable (10/buster, at time of writing) Docker image
+        - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
+      fail-fast: false
+      
+    steps:
+      # Checkout the dedicated repository that steers the CI build
+      - uses: actions/checkout@v2.3.4
+
+      # Install required packages using the system package manager. This
+      # includes installing or updating the git client to a sufficiently
+      # new version that the checkout of the main nrn repository does *not*
+      # fall back to using the REST API, which clobbers submodule information
+      # and breaks the build.
+      - name: Install ${{matrix.os.flavour}} packages
+        run: |
+          # (container+flavour)-specific script runs first because it must be
+          # able to enable repositories that make the flavour-specific script
+          # work.
+          if [ -f "${CONTAINER_SCRIPT}" ]; then source "${CONTAINER_SCRIPT}"; fi
+          if [ -f "${FLAVOUR_SCRIPT}" ]; then source "${FLAVOUR_SCRIPT}"; fi
+        env:
+          FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
+          CONTAINER_SCRIPT: scripts/install_${{matrix.os.flavour}}_${{matrix.os.container}}.sh
+
+      # Checkout the repository; do this before the privilege step so that we
+      # can chown the result there
+      - uses: actions/checkout@v2.3.4
+        with:
+          path: nrn
+          repository: neuronsimulator/nrn
+
+      # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
+      # are root. This is different from when we use the GitHub Actions images
+      # directly, and leads to errors from MPI later. If we run inside Docker,
+      # create a regular user to run as.
+      - name: Setup unprivileged user
+        # If we run in a native GitHub Actions container, without Docker, this
+        # isn't needed
+        if: matrix.os.container
+        run: |
+          useradd --create-home --create-home ${UNPRIVILEGED_USER}
+          chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
+    
+      # Put all the remaining steps in one job that runs as an unprivileged user
+      - name: Build and test NEURON
+        working-directory: ${{github.workspace}}/nrn
+        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+        env:
+          INSTALL_DIR : ${{github.workspace}}/nrn/install
+
+      # Also check that the released wheels work on this platform
+      - name: Test nightly NEURON wheel
+        working-directory: ${{github.workspace}}/nrn
+        run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
+
+      # This step will set up an SSH connection on tmate.io for live debugging
+      # of non-Docker runs that failed.
+      - name: live debug session on failure
+        if: failure() && !matrix.os.container
+        uses: mxschmitt/action-tmate@v3
