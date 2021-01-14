@@ -1,24 +1,7 @@
 #!/bin/bash
 # EPEL is needed to get CMake 3 in CentOS7
 # SCL is needed to get a modern toolchain in CentOS7
-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-  centos-release-scl
-
-# ---
-# --- Begin GitHub-Actions-specific code ---
-# ---
-# The default CentOS7 git version is too old, which causes the GitHub Actions
-# checkout module (https://github.com/actions/checkout) to fall back to using a
-# REST API and break subsequent initialisation of git submodules. This
-# eventually makes the NEURON CI fail. Work around this by installing a newer
-# git client from a 3rd party repository..
-yum install -y https://repo.ius.io/ius-release-el7.rpm
-
-# Tell the install_redhat.sh which git package to install
-GIT_PACKAGE=git224
-# ---
-# --- End GitHub-Actions-specific code ---
-# ---
+yum install -y epel-release centos-release-scl centos-release-scl-rh
 
 # Install a newer toolchain for CentOS7
 yum install -y cmake3 ${SOFTWARE_COLLECTIONS_centos_7}
