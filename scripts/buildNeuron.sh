@@ -45,18 +45,4 @@ echo "------- Install NEURON -------"
 make install
 
 echo "------- Run test suite -------"
-# Make sure the installed files can be found when executing the tests
-export PATH=${INSTALL_DIR}/bin:${PATH}
-# On some platforms (RedHat) then the lib64 prefix will be used for the
-# compiled parts of the NEURON Python package. On other platforms then
-# everything will be under lib/python.
-NRNPYTHONLIB64="${INSTALL_DIR}/lib64/python"
-if [ -f "${NRNPYTHONLIB64}/neuron/__init__.py" ]; then
-  # Avoid adding a trailing : if PYTHONPATH was empty
-  export PYTHONPATH="${NRNPYTHONLIB64}${PYTHONPATH+":"}${PYTHONPATH-}"
-fi
-# Avoid adding a trailing : if PYTHONPATH was empty
-export PYTHONPATH="${INSTALL_DIR}/lib/python${PYTHONPATH+":"}${PYTHONPATH-}"
-
-# Run tests
 ctest -VV
