@@ -9,10 +9,11 @@ source "${SCRIPT_DIR}/environment.sh"
 export PYTHON=$(command -v python3)
 
 # Install extra dependencies for NEURON
+# Make sure we have a modern pip, old ones may not handle dependency versions
+# correctly
+${PYTHON} -m pip install --user --upgrade pip
 ${PYTHON} -m pip install --user --upgrade bokeh cython ipython matplotlib \
   mpi4py pytest scikit-build
-# Install extra dependencies for building the NEURON documentation
-${PYTHON} -m pip install --user --upgrade -r docs/docs_requirements.txt
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
@@ -46,8 +47,16 @@ make install
 echo "------- Run test suite -------"
 # Make sure the installed files can be found when executing the tests
 export PATH=${INSTALL_DIR}/bin:${PATH}
-export PYTHONPATH=${INSTALL_DIR}/lib/python:${PYTHONPATH}
-ctest -VV
+# On some platforms (RedHat) then the lib64 prefix will be used for the
+# compiled parts of the NEURON Python package. On other platforms then
+# everything will be under lib/python.
+NRNPYTHONLIB64="${INSTALL_DIR}/lib64/python"
+if [ -f "${NRNPYTHONLIB64}/neuron/__init__.py" ]; then
+  # Avoid adding a trailing : if PYTHONPATH was empty
+  export PYTHONPATH="${NRNPYTHONLIB64}${PYTHONPATH+":"}${PYTHONPATH-}"
+fi
+# Avoid adding a trailing : if PYTHONPATH was empty
+export PYTHONPATH="${INSTALL_DIR}/lib/python${PYTHONPATH+":"}${PYTHONPATH-}"
 
-echo "------- Build Doxygen Documentation -------"
-make docs # We're still in the build/ directory here
+# Run tests
+ctest -VV

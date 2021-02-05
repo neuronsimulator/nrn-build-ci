@@ -8,6 +8,6 @@ export DEBIAN_FRONTEND=noninteractive
 # --- End GitHub-Actions-specific code ---
 # ---
 apt-get update
-apt-get install -y bison cmake doxygen flex git libncurses-dev libopenmpi-dev \
+apt-get install -y bison cmake flex git libncurses-dev libopenmpi-dev \
   libx11-dev libxcomposite-dev openmpi-bin python3-numpy python3-pip \
   python3-setuptools python3-venv python3-wheel sudo
