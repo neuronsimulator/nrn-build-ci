@@ -13,7 +13,7 @@ export PYTHON=$(command -v python3)
 # correctly
 ${PYTHON} -m pip install --user --upgrade pip
 ${PYTHON} -m pip install --user --upgrade bokeh cython ipython matplotlib \
-  mpi4py pytest scikit-build
+  mpi4py pytest pytest-cov scikit-build
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
