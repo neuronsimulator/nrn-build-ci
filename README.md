@@ -1,5 +1,5 @@
 # Scheduled CI builds for NEURON
-![Scheduled CI build status](https://github.com/neuronsimulator/nrn-build-ci/workflows/Scheduled%20NEURON%20CI/badge.svg)
+[![NEURON Build CI](https://github.com/neuronsimulator/nrn-build-ci/actions/workflows/build-neuron.yml/badge.svg)](https://github.com/neuronsimulator/nrn-build-ci/actions/workflows/build-neuron.yml)
 
 This repository hosts [scheduled GitHub Actions workflows](.github/workflows/neuron-ci.yaml) that verify that [the main NEURON repository](https://github.com/neuronsimulator/nrn) can be built and run on a variety of common Linux distributions and macOS versions.
 At present Ubuntu 18.04, Ubuntu 20.04, Fedora 32, Fedora 33, CentOS7, CentOS8, Debian Buster (10) and macOS 10.15 are tested.
