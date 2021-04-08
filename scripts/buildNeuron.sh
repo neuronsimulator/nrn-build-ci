@@ -33,16 +33,27 @@ ${PYTHON} -c 'import os, sys; os.set_blocking(sys.stdout.fileno(), True)'
 echo "------- Configuring NEURON -------"
 export CMAKE_OPTION="-DNRN_ENABLE_BINARY_SPECIAL=ON -DNRN_ENABLE_MPI=ON \
  -DNRN_ENABLE_INTERVIEWS=ON -DNRN_ENABLE_CORENEURON=ON \
- -DPYTHON_EXECUTABLE=${PYTHON}"
+ -DPYTHON_EXECUTABLE=${PYTHON} -DCMAKE_C_COMPILER=${CC} \
+ -DCMAKE_CXX_COMPILER=${CXX} -DNRN_ENABLE_TESTS=ON \
+ -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}"
 echo "CMake options: ${CMAKE_OPTION}"
 mkdir build && cd build
-cmake ${CMAKE_OPTION} -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DNRN_ENABLE_TESTS=ON -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+cmake ${CMAKE_OPTION} ..
 
 echo "------- Build NEURON -------"
-cmake --build . -- -j
+# Autodetection does not seem to work well, compiler processes were getting killed.
+# These core counts are taken from
+# https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+if [ "${OS_FLAVOUR}" == "macOS" ]; then
+  PARALLEL_JOBS=3
+else
+  PARALLEL_JOBS=2
+fi
+# The --parallel option to CMake was only added in v3.12
+cmake --build . -- -j ${PARALLEL_JOBS}
 
 echo "------- Install NEURON -------"
 make install
 
 echo "------- Run test suite -------"
-ctest -VV
+ctest -VV -j ${PARALLEL_JOBS}
