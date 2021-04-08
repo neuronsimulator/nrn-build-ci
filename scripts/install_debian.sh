@@ -9,5 +9,5 @@ export DEBIAN_FRONTEND=noninteractive
 # ---
 apt-get update
 apt-get install -y bison cmake flex git libncurses-dev libopenmpi-dev \
-  libx11-dev libxcomposite-dev openmpi-bin python3-numpy python3-pip \
-  python3-setuptools python3-venv python3-wheel sudo
+  libx11-dev libxcomposite-dev ninja-build openmpi-bin python3-numpy \
+  python3-pip python3-setuptools python3-venv python3-wheel sudo
