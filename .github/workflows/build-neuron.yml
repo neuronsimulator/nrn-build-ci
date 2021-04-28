@@ -61,9 +61,9 @@ jobs:
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
         # CentOS8 Docker image
         - { vm: ubuntu-latest, container: "centos:8", flavour: redhat }
-        # Fedora 32 Docker image
-        - { vm: ubuntu-latest, container: "fedora:32", flavour: redhat }
-        # Fedora Latest (33, at time of writing) Docker image
+        # Fedora 33 Docker image
+        - { vm: ubuntu-latest, container: "fedora:33", flavour: redhat }
+        # Fedora Latest (34, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
         # Ubuntu 18.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:18.04", flavour: debian }
@@ -115,7 +115,7 @@ jobs:
         # isn't needed
         if: matrix.os.container
         run: |
-          useradd --create-home --create-home ${UNPRIVILEGED_USER}
+          useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
     
       # Put all the remaining steps in one job that runs as an unprivileged user
