@@ -23,9 +23,8 @@ jobs:
         repository: neuronsimulator/nrn
     - id: provide_versions
       run: |
-        # To enable this feature after v8.0.0 is released, change 8 to 7 (for
-        # example) so the latest release is tested every Sunday (for example)
-        if [ $(date +%u) -eq 8 ]
+        # Test the latest release on Mondays.
+        if [ $(date +%u) -eq 1 ]
         then
           echo "::set-output name=matrix::[\"\", \"${{steps.get_latest_release.outputs.release }}\"]"
         else
