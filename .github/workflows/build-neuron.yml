@@ -5,6 +5,11 @@ on:
   schedule:
     # Run at 2am every day
     - cron:  '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      azure_drop_url:
+        description: 'Azure drop (artifacts) url'
+        required: true
 
 defaults:
   run:
@@ -16,6 +21,11 @@ jobs:
   provide_version_matrix:
     runs-on: ubuntu-latest
     steps:
+    - name: check Azure drop url exists -> ${{ github.event.inputs.azure_drop_url }}
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
+
     - id: get_latest_release
       uses: pozetroninc/github-action-get-latest-release@v0.5.0
       with:
@@ -119,10 +129,17 @@ jobs:
     
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
+        if: github.event_name != 'workflow_dispatch' # manual dispatch -> wheels only
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
+
+      # Download specific wheels from Azure via workflow dispatch
+      - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ${{github.workspace}}
+        run: ./scripts/getAzureDrop.sh '${{ github.event.inputs.azure_drop_url }}'
 
       # Also check that the released wheels work on this platform
       - name: Test nightly NEURON wheel
