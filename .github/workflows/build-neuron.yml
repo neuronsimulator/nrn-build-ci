@@ -150,5 +150,5 @@ jobs:
       # This step will set up an SSH connection on tmate.io for live debugging
       # of non-Docker runs that failed.
       - name: live debug session on failure
-        if: failure() && !matrix.os.container
+        if: always() && !matrix.os.container
         uses: mxschmitt/action-tmate@v3
