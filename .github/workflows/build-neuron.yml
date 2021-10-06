@@ -135,7 +135,11 @@ jobs:
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
-
+      # This step will set up an SSH connection on tmate.io for live debugging
+      # of non-Docker runs that failed.
+      - name: live debug session on failure
+        uses: mxschmitt/action-tmate@v3
+        
       # Download specific wheels from Azure via workflow dispatch
       - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
         if: github.event_name == 'workflow_dispatch'
