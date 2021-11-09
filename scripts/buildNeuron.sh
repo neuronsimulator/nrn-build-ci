@@ -31,7 +31,7 @@ cmake --version
 ${PYTHON} -c 'import os, sys; os.set_blocking(sys.stdout.fileno(), True)'
 
 echo "------- Configuring NEURON -------"
-export CMAKE_OPTION="-G Ninja -DNRN_ENABLE_BINARY_SPECIAL=ON \
+export CMAKE_OPTION="-G Ninja \
  -DNRN_ENABLE_MPI=ON -DNRN_ENABLE_INTERVIEWS=ON \
  -DNRN_ENABLE_CORENEURON=ON -DPYTHON_EXECUTABLE=${PYTHON} \
  -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} \
