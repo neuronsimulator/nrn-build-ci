@@ -72,8 +72,6 @@ jobs:
         - { vm: ubuntu-latest, container: "centos:8", flavour: redhat }
         # Fedora 34 Docker image
         - { vm: ubuntu-latest, container: "fedora:34", flavour: redhat }
-        # Fedora Latest (35, at time of writing) Docker image
-        - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
         # Ubuntu 18.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:18.04", flavour: debian }
         # Ubuntu Latest (20.04, at time of writing) Docker image
@@ -83,9 +81,11 @@ jobs:
         # Debian Bullseye (11) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
-        exclude:
-          - os.container: "fedora:latest"
-            branch_or_tag: "8.0.0"
+        # Avoid the fedora:latest + 8.0.0 combination.
+        include:
+          # Fedora Latest (35, at time of writing) Docker image
+          - os: { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
+            branch_or_tag: ""
       fail-fast: false
       
     steps:
