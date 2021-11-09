@@ -60,10 +60,8 @@ jobs:
     strategy:
       matrix:
         os:
-        # GitHub Actions MacOS 11.0 runner: disable because this is just a
-        # preview that does not currently seem to be backed by many
-        # resources.
-        #- { vm: macos-11.0, flavour: macOS }
+        # GitHub Actions MacOS 11.0 runner
+        - { vm: macos-11.0, flavour: macOS }
         # GitHub Actions MacOS 10.15 runner
         - { vm: macos-10.15, flavour: macOS }
         # CentOS7 Docker image
