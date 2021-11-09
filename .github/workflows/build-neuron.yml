@@ -33,8 +33,8 @@ jobs:
         repository: neuronsimulator/nrn
     - id: provide_versions
       run: |
-        # Test the latest release on Mondays.
-        if [ $(date +%u) -eq 1 ]
+        # Test the latest release on Tuesdays.
+        if [ $(date +%u) -eq 2 ]
         then
           echo "::set-output name=matrix::[\"\", \"${{steps.get_latest_release.outputs.release }}\"]"
         else
@@ -83,6 +83,9 @@ jobs:
         # Debian Bullseye (11) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
+        exclude:
+          - os.container: "fedora:latest"
+            branch_or_tag: "8.0.0"
       fail-fast: false
       
     steps:
