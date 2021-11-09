@@ -70,9 +70,9 @@ jobs:
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
         # CentOS8 Docker image
         - { vm: ubuntu-latest, container: "centos:8", flavour: redhat }
-        # Fedora 33 Docker image
-        - { vm: ubuntu-latest, container: "fedora:33", flavour: redhat }
-        # Fedora Latest (34, at time of writing) Docker image
+        # Fedora 34 Docker image
+        - { vm: ubuntu-latest, container: "fedora:34", flavour: redhat }
+        # Fedora Latest (35, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
         # Ubuntu 18.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:18.04", flavour: debian }
