@@ -146,6 +146,8 @@ jobs:
 
       # Also check that the released wheels work on this platform
       - name: Test nightly NEURON wheel
+        # See https://github.com/neuronsimulator/nrn-build-ci/issues/31.
+        if: ${{matrix.os.container != 'fedora:latest'}}
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
 
