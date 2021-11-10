@@ -2,6 +2,7 @@
 [![NEURON Build CI](https://github.com/neuronsimulator/nrn-build-ci/actions/workflows/build-neuron.yml/badge.svg)](https://github.com/neuronsimulator/nrn-build-ci/actions/workflows/build-neuron.yml)
 
 This repository hosts [scheduled GitHub Actions workflows](.github/workflows/neuron-ci.yaml) that verify that [the main NEURON repository](https://github.com/neuronsimulator/nrn) can be built and run on a variety of common Linux distributions and macOS versions.
+The default branch of NEURON is tested every night, and the latest tagged release is tested once a week.
 At present Ubuntu 18.04, Ubuntu 20.04, Fedora 34, Fedora 35, CentOS7, CentOS8, Debian Buster (10), Debian Bullseye (11), macOS 10.15 and macOS 11.0 are tested.
 
 The configuration of these builds serves as an up-to-date reference of how to build NEURON on each platform.
@@ -68,8 +69,11 @@ Here are the steps to follow:
   1) click on `Actions` tab
   2) click on `Scheduled NEURON CI` tab under `Workflows`
   3) click on `Run workflow`
-  4) input `Azure drop (artifacts) url` and click `Run workflow`
+  4) input `Azure drop (artifacts) url` and click `Run workflow` (leave `NEURON branch to test`) blank.
      
   ![](images/manual-dispatch.png)
 
-
+# Testing a NEURON feature branch
+By default the GitHub Actions workflow in this repository runs every night, and on modifications made to the `nrn-build-ci` repository itself.
+You can also use the same workflow to manually trigger testing a feature branch of NEURON, for example if you have a NEURON pull request that is fixing an issue identified by one of the scheduled builds in this repository.
+In that case, follow the instructions just above to launch a manual job, but instead of filling the `Azure drop (artifacts) url`, leave that blank and put the name of your NEURON feature branch in `NEURON branch to test`.
