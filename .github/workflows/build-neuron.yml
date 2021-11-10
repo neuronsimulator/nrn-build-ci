@@ -9,7 +9,9 @@ on:
     inputs:
       azure_drop_url:
         description: 'Azure drop (artifacts) url'
-        required: true
+      neuron_branch:
+        description: 'NEURON branch to test'
+        default: ''
 
 defaults:
   run:
@@ -22,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check Azure drop url exists -> ${{ github.event.inputs.azure_drop_url }}
-      if: github.event_name == 'workflow_dispatch'
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.azure_drop_url
       run: |
         curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
 
@@ -33,12 +35,12 @@ jobs:
         repository: neuronsimulator/nrn
     - id: provide_versions
       run: |
-        # Test the latest release on Mondays.
-        if [ $(date +%u) -eq 1 ]
+        # Test the latest release on Mondays, and if we are not being told to test a specific branch
+        if [[ $(date +%u) == 1 && '${{github.event.inputs.neuron_branch}}' == "" ]]
         then
           echo "::set-output name=matrix::[\"\", \"${{steps.get_latest_release.outputs.release }}\"]"
         else
-          echo "::set-output name=matrix::[\"\"]"
+          echo "::set-output name=matrix::[\"${{github.event.inputs.neuron_branch}}\"]"
         fi
     outputs:
       matrix: ${{ steps.provide_versions.outputs.matrix }}
@@ -85,7 +87,7 @@ jobs:
         include:
           # Fedora Latest (35, at time of writing) Docker image
           - os: { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
-            branch_or_tag: ""
+            branch_or_tag: "${{github.event.inputs.neuron_branch}}"
       fail-fast: false
       
     steps:
@@ -130,7 +132,7 @@ jobs:
     
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
-        if: github.event_name != 'workflow_dispatch' # manual dispatch -> wheels only
+        if: !github.event.inputs.azure_drop_url
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
@@ -138,7 +140,7 @@ jobs:
 
       # Download specific wheels from Azure via workflow dispatch
       - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event.inputs.azure_drop_url
         working-directory: ${{github.workspace}}
         run: ./scripts/getAzureDrop.sh '${{ github.event.inputs.azure_drop_url }}'
 
