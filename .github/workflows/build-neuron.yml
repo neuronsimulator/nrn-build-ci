@@ -116,7 +116,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           if [ -n "${{matrix.branch_or_tag}}" ]; then BRANCH_OPT="--branch=${{matrix.branch_or_tag}}"; fi
-          git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
+          git clone --depth=1 --single-branch -b prmaodk/tqperf-crypto ${{github.server_url}}/${{github.repository_owner}}/nrn
 
       # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
       # are root. This is different from when we use the GitHub Actions images
