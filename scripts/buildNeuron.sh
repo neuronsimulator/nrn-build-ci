@@ -13,12 +13,7 @@ export PYTHON=$(command -v python3)
 # correctly
 ${PYTHON} -m pip install --user --upgrade pip
 ${PYTHON} -m pip install --user --upgrade bokeh cython ipython matplotlib \
-  pytest pytest-cov scikit-build
-
-# TODO: temporary workaround for setuptools==60.1.0
-# See https://github.com/mpi4py/mpi4py/issues/157#issuecomment-1001022274
-SETUPTOOLS_USE_DISTUTILS=stdlib ${PYTHON} -m pip install --user --upgrade mpi4py
-
+  mpi4py pytest pytest-cov scikit-build
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
