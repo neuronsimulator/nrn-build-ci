@@ -101,6 +101,8 @@ jobs:
       # and breaks the build.
       - name: Install ${{matrix.os.flavour}} packages
         run: |
+          CONTAINER_URL="${{matrix.os.container}}"
+          CONTAINER_SCRIPT="scripts/install_${{matrix.os.flavour}}_${CONTAINER_URL##*/}.sh"
           # (container+flavour)-specific script runs first because it must be
           # able to enable repositories that make the flavour-specific script
           # work.
@@ -108,7 +110,6 @@ jobs:
           if [ -f "${FLAVOUR_SCRIPT}" ]; then source "${FLAVOUR_SCRIPT}"; fi
         env:
           FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
-          CONTAINER_SCRIPT: scripts/install_${{matrix.os.flavour}}_${{matrix.os.container}}.sh
 
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
