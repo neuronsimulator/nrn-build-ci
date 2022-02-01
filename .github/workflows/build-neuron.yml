@@ -68,8 +68,8 @@ jobs:
         - { vm: macos-10.15, flavour: macOS }
         # CentOS7 Docker image
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
-        # CentOS8 Docker image
-        - { vm: ubuntu-latest, container: "centos:8", flavour: redhat }
+        # CentOS Stream 8 Docker image
+        - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream8", flavour: redhat }
         # Fedora 34 Docker image
         - { vm: ubuntu-latest, container: "fedora:34", flavour: redhat }
         # Ubuntu 18.04 Docker image
