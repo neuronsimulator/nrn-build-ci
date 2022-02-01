@@ -11,7 +11,7 @@ then
   # Construct a variable name listing RedHat Software Collections that must be
   # enabled. This is something like SOFTWARE_COLLECTIONS_centos_7, where the
   # : separator from Docker and any . have been replaced with _
-  SOFTWARE_COLLECTIONS_NAME="SOFTWARE_COLLECTIONS_${OS_CONTAINER//[:.]/_}"
+  SOFTWARE_COLLECTIONS_NAME="SOFTWARE_COLLECTIONS_${OS_CONTAINER}"
   # Get the list of software collections for this image
   SOFTWARE_COLLECTIONS="${!SOFTWARE_COLLECTIONS_NAME}"
   # If there are any, inject an `scl enable` layer into the commandline
