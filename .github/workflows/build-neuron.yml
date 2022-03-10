@@ -151,6 +151,8 @@ jobs:
       - name: Test nightly NEURON wheel
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
+        env:
+          NEURON_BRANCH_OR_TAG: ${{matrix.branch_or_tag}}
 
       # This step will set up an SSH connection on tmate.io for live debugging
       # of non-Docker runs that failed.

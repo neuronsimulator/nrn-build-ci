@@ -22,6 +22,7 @@ then
 fi
 echo "Wrapper script generated command prefix: ${CMD_PREFIX}"
 QUOTED_ARGS=$(printf " %q" "$@")
-${CMD_PREFIX} sh -c "INSTALL_DIR=${INSTALL_DIR} OS_FLAVOUR=${OS_FLAVOUR}\
+${CMD_PREFIX} sh -c "INSTALL_DIR=${INSTALL_DIR}\
+ NEURON_BRANCH_OR_TAG=${NEURON_BRANCH_OR_TAG} OS_FLAVOUR=${OS_FLAVOUR}\
  OS_CONTAINER=${OS_CONTAINER} bash --noprofile --norc -e -o pipefail\
  --${QUOTED_ARGS}"
