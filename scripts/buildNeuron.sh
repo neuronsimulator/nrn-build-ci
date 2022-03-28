@@ -5,15 +5,25 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "${SCRIPT_DIR}/environment.sh"
 
-# Choose which Python version to use
-export PYTHON=$(command -v python3)
+# Choose which Python version to use. If an installation script set NRN_PYTHON,
+# use that.
+export PYTHON=${NRN_PYTHON:-$(command -v python3)}
 
-# Install extra dependencies for NEURON
+# Set up a virtual environment. On some distros (Ubuntu 18.04 + Python 3.7) we
+# only get venv from the system packages, not pip.
+${PYTHON} -m venv nrn_venv
+. nrn_venv/bin/activate
+
 # Make sure we have a modern pip, old ones may not handle dependency versions
 # correctly
-${PYTHON} -m pip install --user --upgrade pip
-${PYTHON} -m pip install --user --upgrade bokeh cython ipython matplotlib \
-  mpi4py pytest pytest-cov scikit-build
+pip install --upgrade pip
+
+# Use the virtual environment python instead of the system one it redirects to
+export PYTHON=$(command -v python)
+
+# Install extra dependencies for NEURON into the virtual environment.
+pip install --upgrade bokeh cython ipython matplotlib mpi4py numpy pytest \
+  pytest-cov scikit-build
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}

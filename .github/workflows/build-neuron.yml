@@ -56,7 +56,7 @@ jobs:
       OS_FLAVOUR: ${{matrix.os.flavour}}
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
       # Extra software collections to be installed and enabled on CentOS7
-      SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 rh-git218
+      SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 rh-git218 rh-python38
 
     strategy:
       matrix:

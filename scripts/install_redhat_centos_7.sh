@@ -4,7 +4,7 @@
 yum install -y epel-release centos-release-scl centos-release-scl-rh
 
 # Install a newer toolchain for CentOS7
-yum install -y cmake3 ${SOFTWARE_COLLECTIONS_centos_7}
+yum install -y cmake3 ${SOFTWARE_COLLECTIONS_centos_7} rh-python38-python-devel
 
 # Make sure `cmake` and `ctest` see the 3.x versions, instead of the ancient
 # CMake 2 included in CentOS7

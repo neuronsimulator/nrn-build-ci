@@ -2,7 +2,7 @@
 # Use DNF if available (not CentOS7), otherwise YUM
 CMD=$(command -v dnf || command -v yum)
 ${CMD} update -y
-${CMD} install -y bison cmake diffutils dnf flex gcc gcc-c++ git \
-  openmpi-devel libXcomposite-devel libXext-devel make readline-devel ncurses-devel \
-  ninja-build python3-devel python3-pip python3-wheel sudo which wget unzip \
-  findutils openssl-devel  # for tqperf integration test
+${CMD} install -y bison cmake diffutils dnf findutils flex gcc gcc-c++ git \
+  openmpi-devel libXcomposite-devel libXext-devel make python3-devel \
+  readline-devel ncurses-devel ninja-build sudo which wget unzip \
+  openssl-devel # for tqperf integration test
