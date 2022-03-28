@@ -21,6 +21,9 @@ pip install --upgrade pip
 # Use the virtual environment python instead of the system one it redirects to
 export PYTHON=$(command -v python)
 
+# nrniv -python does not copy properly with virtualenvs
+export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
+
 # Install extra dependencies for NEURON into the virtual environment.
 pip install --upgrade bokeh cython ipython matplotlib mpi4py numpy pytest \
   pytest-cov scikit-build
@@ -59,8 +62,7 @@ if [ "${OS_FLAVOUR}" == "macOS" ]; then
 else
   PARALLEL_JOBS=2
 fi
-# The --parallel option to CMake was only added in v3.12
-cmake --build . -- -j ${PARALLEL_JOBS}
+cmake --build . --parallel ${PARALLEL_JOBS}
 
 echo "------- Install NEURON -------"
 cmake --build . -- install
