@@ -75,9 +75,9 @@ jobs:
         - { vm: ubuntu-latest, container: "fedora:34", flavour: redhat }
         # Fedora Latest (35, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
-        # Ubuntu 18.04 Docker image
-        - { vm: ubuntu-latest, container: "ubuntu:18.04", flavour: debian }
-        # Ubuntu Latest (20.04, at time of writing) Docker image
+        # Ubuntu 20.04 Docker image
+        - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
+        # Ubuntu Latest (22.04, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "ubuntu:latest", flavour: debian }
         # Debian Buster (10) Docker image
         - { vm: ubuntu-latest, container: "debian:buster", flavour: debian }
