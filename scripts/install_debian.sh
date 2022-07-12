@@ -8,9 +8,9 @@ export DEBIAN_FRONTEND=noninteractive
 # --- End GitHub-Actions-specific code ---
 # ---
 apt-get update
-apt-get install -y bison cmake flex git libncurses-dev libmpich-dev \
-  libx11-dev libxcomposite-dev ninja-build mpich libreadline-dev sudo wget \
-  unzip libssl-dev # for tqperf integration test
+apt-get install -y bison cmake flex git libboost-dev libncurses-dev \
+  libmpich-dev libssl-dev libx11-dev libxcomposite-dev ninja-build \
+  mpich libreadline-dev sudo wget unzip
 if [[ -z "${NRN_PYTHON}" ]]; then
   apt-get install -y python3-dev python3-venv
   export NRN_PYTHON=$(command -v python3)
