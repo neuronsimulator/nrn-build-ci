@@ -3,5 +3,5 @@ echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/source
 apt-get update
 apt-get install -t buster-backports -y cmake
 # Set MPICH to be the default MPI
-apt-get install mpich
+apt-get install -y mpich
 update-alternatives --set mpi /usr/bin/mpicc.mpich
