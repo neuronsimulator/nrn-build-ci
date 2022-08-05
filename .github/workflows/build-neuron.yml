@@ -52,7 +52,6 @@ jobs:
     container: ${{ matrix.os.container }}
     name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag}}
     env:
-      SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
       OS_FLAVOUR: ${{matrix.os.flavour}}
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
       # Extra software collections to be installed and enabled on CentOS7
