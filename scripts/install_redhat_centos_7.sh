@@ -1,13 +1,11 @@
 #!/bin/bash
+
 # EPEL is needed to get CMake 3 in CentOS7
 # SCL is needed to get a modern toolchain in CentOS7
 yum install -y epel-release centos-release-scl centos-release-scl-rh
 
 # Install a newer toolchain for CentOS7
 yum install -y cmake3 ${SOFTWARE_COLLECTIONS_centos_7} rh-python38-python-devel
-
-# Remove older openmpi and install v3 instead
-yum remove -y openmpi-devel && yum install -y openmpi3-devel
 
 # Make sure `cmake` and `ctest` see the 3.x versions, instead of the ancient
 # CMake 2 included in CentOS7
