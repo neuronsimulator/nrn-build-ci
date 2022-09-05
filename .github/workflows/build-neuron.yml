@@ -36,7 +36,7 @@ jobs:
     - id: provide_versions
       run: |
         # Test the latest release on Mondays, and if we are not being told to test a specific branch
-        if [[ $(date +%u) == 4 && '${{github.event.inputs.neuron_branch}}' == "" ]]
+        if [[ $(date +%u) == 1 && '${{github.event.inputs.neuron_branch}}' == "" ]]
         then
           echo "::set-output name=matrix::[\"\", \"${{steps.get_latest_release.outputs.release }}\"]"
         else
@@ -84,6 +84,13 @@ jobs:
         # Debian Bullseye (11) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
+        exclude:
+          # Don't test the default branch (master) against Debian Buster as it
+          # isn't straightforward to install GCC9+ there. Note that this will
+          # still run when the CI is launched against a specific NEURON branch,
+          # so some failures are still to be expected.
+          - os: { vm: ubuntu-latest, container: "debian:buster", flavour: debian }
+            branch_or_tag: ""
       fail-fast: false
       
     steps:
