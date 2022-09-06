@@ -126,8 +126,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           if [ -n "${{matrix.branch_or_tag}}" ]; then BRANCH_OPT="--branch=${{matrix.branch_or_tag}}"; fi
-          #git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
-          git clone --depth=1 --single-branch --branch=pramodk/centos7-mpich ${{github.server_url}}/${{github.repository_owner}}/nrn
+          git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
           # Init submodules for testing purposes
           cd nrn && git submodule update --init
 
@@ -144,12 +143,12 @@ jobs:
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
     
       # Put all the remaining steps in one job that runs as an unprivileged user
-      #- name: Build and test NEURON
-      #  if: ${{!github.event.inputs.azure_drop_url}}
-      #  working-directory: ${{github.workspace}}/nrn
-      #  run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
-      #  env:
-      #    INSTALL_DIR : ${{github.workspace}}/nrn/install
+      - name: Build and test NEURON
+        if: ${{!github.event.inputs.azure_drop_url}}
+        working-directory: ${{github.workspace}}/nrn
+        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+        env:
+          INSTALL_DIR : ${{github.workspace}}/nrn/install
 
       # Download specific wheels from Azure via workflow dispatch
       - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
