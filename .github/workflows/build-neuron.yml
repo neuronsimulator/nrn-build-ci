@@ -144,12 +144,12 @@ jobs:
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
     
       # Put all the remaining steps in one job that runs as an unprivileged user
-      - name: Build and test NEURON
-        if: ${{!github.event.inputs.azure_drop_url}}
-        working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
-        env:
-          INSTALL_DIR : ${{github.workspace}}/nrn/install
+      #- name: Build and test NEURON
+      #  if: ${{!github.event.inputs.azure_drop_url}}
+      #  working-directory: ${{github.workspace}}/nrn
+      #  run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+      #  env:
+      #    INSTALL_DIR : ${{github.workspace}}/nrn/install
 
       # Download specific wheels from Azure via workflow dispatch
       - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
