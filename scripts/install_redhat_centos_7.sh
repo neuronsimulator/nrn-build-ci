@@ -1,4 +1,7 @@
 #!/bin/bash
+# Use MPICH instead of OpenMPI on CentOS7, see #51.
+# This variable will be read by install_redhat.sh
+mpi_lib=mpich-devel
 # EPEL is needed to get CMake 3 in CentOS7
 # SCL is needed to get a modern toolchain in CentOS7
 yum install -y epel-release centos-release-scl centos-release-scl-rh
