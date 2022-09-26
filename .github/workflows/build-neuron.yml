@@ -91,6 +91,11 @@ jobs:
           # so some failures are still to be expected.
           - os: { vm: ubuntu-latest, container: "debian:buster", flavour: debian }
             branch_or_tag: ""
+          # Don't test the 8.2.1 release against CentOS7 because it will fail.
+          # This is expected to be fixed in 8.2.2 (if that ever comes) by
+          # https://github.com/BlueBrain/CoreNeuron/pull/862.
+          - os: { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
+            branch_or_tag: "8.2.1"
       fail-fast: false
       
     steps:
