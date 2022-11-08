@@ -18,11 +18,6 @@ if [[ -d "${DROP_DIR}" ]]; then
   # get Azure version to avoid downloading something else in the venv for test_wheels.sh
   NRN_PACKAGE="neuron-nightly==$(pip show neuron-nightly | grep Version | cut -d ' ' -f2 )"
   USE_VENV="false"
-elif [[ -n "${NEURON_BRANCH_OR_TAG}" ]]; then
-  # Assume it's a tag that matches the PyPI release version
-  NRN_PACKAGE="neuron==${NEURON_BRANCH_OR_TAG}"
-else
-  NRN_PACKAGE="neuron-nightly"
 fi
 # Run NEURON's wheel testing script
 echo "Testing NEURON wheel: ${NRN_PACKAGE} (venv=${USE_VENV})"
