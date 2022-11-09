@@ -25,4 +25,5 @@ QUOTED_ARGS=$(printf " %q" "$@")
 ${CMD_PREFIX} sh -c "INSTALL_DIR=${INSTALL_DIR}\
  NEURON_BRANCH_OR_TAG=${NEURON_BRANCH_OR_TAG} NRN_PYTHON=${NRN_PYTHON} \
  OS_FLAVOUR=${OS_FLAVOUR} OS_CONTAINER=${OS_CONTAINER} \
- bash --noprofile --norc -e -o pipefail --${QUOTED_ARGS}"
+ NRN_PACKAGE=${NRN_PACKAGE} bash --noprofile --norc -e -o pipefail \
+ --${QUOTED_ARGS}"
