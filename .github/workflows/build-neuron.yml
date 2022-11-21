@@ -84,9 +84,9 @@ jobs:
         - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream8", flavour: redhat }
         # CentOS Stream 9 Docker image
         - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream9", flavour: redhat }
-        # Fedora 35 Docker image
-        - { vm: ubuntu-latest, container: "fedora:35", flavour: redhat }
-        # Fedora Latest (36, at time of writing) Docker image
+        # Fedora 36 Docker image
+        - { vm: ubuntu-latest, container: "fedora:36", flavour: redhat }
+        # Fedora Latest (37, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
         # Ubuntu 20.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
@@ -110,6 +110,26 @@ jobs:
           # This is expected to be fixed in 8.2.2 (if that ever comes) by
           # https://github.com/BlueBrain/CoreNeuron/pull/862.
           - os: { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
+            branch_or_tag_and_default_wheel:
+              branch_or_tag: "8.2.1"
+              default_wheel: "neuron==8.2.1"
+          # Don't test the 8.2.1 release against Fedora 37/latest because there
+          # are not any wheels for Python 3.11. This should be fixed in 8.2.2,
+          # see https://github.com/neuronsimulator/nrn/issues/2089.
+          - os: { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
+            branch_or_tag_and_default_wheel:
+              branch_or_tag: "8.2.1"
+              default_wheel: "neuron==8.2.1"
+          # Don't test the 8.2.1 release against macOS because it does not
+          # include fixes needed for new setuptools(?), see some combination of
+          # https://github.com/neuronsimulator/nrn/issues/1605
+          # https://github.com/neuronsimulator/nrn/pull/2073
+          # https://github.com/neuronsimulator/nrn/pull/2074
+          - os: { vm: macos-11, flavour: macOS }
+            branch_or_tag_and_default_wheel:
+              branch_or_tag: "8.2.1"
+              default_wheel: "neuron==8.2.1"
+          - os: { vm: macos-12, flavour: macOS }
             branch_or_tag_and_default_wheel:
               branch_or_tag: "8.2.1"
               default_wheel: "neuron==8.2.1"
