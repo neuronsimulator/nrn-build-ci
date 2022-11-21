@@ -120,6 +120,19 @@ jobs:
             branch_or_tag_and_default_wheel:
               branch_or_tag: "8.2.1"
               default_wheel: "neuron==8.2.1"
+          # Don't test the 8.2.1 release against macOS because it does not
+          # include fixes needed for new setuptools(?), see some combination of
+          # https://github.com/neuronsimulator/nrn/issues/1605
+          # https://github.com/neuronsimulator/nrn/pull/2073
+          # https://github.com/neuronsimulator/nrn/pull/2074
+          - os: { vm: macos-11, flavour: macOS }
+            branch_or_tag_and_default_wheel:
+              branch_or_tag: "8.2.1"
+              default_wheel: "neuron==8.2.1"
+          - os: { vm: macos-12, flavour: macOS }
+            branch_or_tag_and_default_wheel:
+              branch_or_tag: "8.2.1"
+              default_wheel: "neuron==8.2.1"
       fail-fast: false
       
     steps:
