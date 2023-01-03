@@ -18,7 +18,7 @@ alternatives --install /usr/local/bin/cmake cmake /usr/bin/cmake3 20 \
 
 # Install a newer version of Flex; this logic is copied from that in the
 # Dockerfile that is used to build the NEURON Python wheels.
-curl -o flex-2.6.4-9.el9.src.rpm http://mirror.stream.centos.org/9-stream/AppStream/source/tree/Packages/flex-2.6.4-9.el9.src.rpm
+curl -L -o flex-2.6.4-9.el9.src.rpm http://mirror.stream.centos.org/9-stream/AppStream/source/tree/Packages/flex-2.6.4-9.el9.src.rpm
 yum-builddep -y flex-2.6.4-9.el9.src.rpm
 yum install -y rpm-build
 rpmbuild --rebuild flex-2.6.4-9.el9.src.rpm
