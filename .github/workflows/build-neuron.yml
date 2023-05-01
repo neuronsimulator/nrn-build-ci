@@ -84,9 +84,9 @@ jobs:
         - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream8", flavour: redhat }
         # CentOS Stream 9 Docker image
         - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream9", flavour: redhat }
-        # Fedora 36 Docker image
-        - { vm: ubuntu-latest, container: "fedora:36", flavour: redhat }
-        # Fedora Latest (37, at time of writing) Docker image
+        # Fedora 37 Docker image
+        - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
+        # Fedora Latest (38, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
         # Ubuntu 20.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
