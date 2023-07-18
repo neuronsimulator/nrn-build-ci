@@ -13,6 +13,10 @@ The tested distributions are generally configured with the explicit
 name/version of the second-newest version of the distribution at the time,
 while a generic "latest" tag is used for the latest version (where available).
 
+There is currently an exception for the CentOS family, where three versions are
+retained because the third-newest, CentOS7, is still in use on the BlueBrain5
+system.
+
 This means that when a new version of a distribution is released, we
 automatically start testing it.
 When this happens, the old second-newest version generally becomes the
