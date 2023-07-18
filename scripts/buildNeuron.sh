@@ -25,7 +25,7 @@ export PYTHON=$(command -v python)
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
 
 # Install extra dependencies for NEURON into the virtual environment.
-pip install --upgrade bokeh cython ipython matplotlib mpi4py numpy pytest \
+pip install --upgrade bokeh "cython<3" ipython matplotlib mpi4py numpy pytest \
   pytest-cov scikit-build sympy
 
 # Set default compilers, but don't override preset values
