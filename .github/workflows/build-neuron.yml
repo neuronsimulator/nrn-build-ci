@@ -92,20 +92,11 @@ jobs:
         - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
         # Ubuntu Latest (22.04, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "ubuntu:latest", flavour: debian }
-        # Debian Buster (10) Docker image
-        - { vm: ubuntu-latest, container: "debian:buster", flavour: debian }
         # Debian Bullseye (11) Docker image
+        - { vm: ubuntu-latest, container: "debian:bullseye", flavour: debian }
+        # At the time of writing, Debian Bookworm (12) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
-        exclude:
-          # Don't test the default branch (master) against Debian Buster as it
-          # isn't straightforward to install GCC9+ there. Note that this will
-          # still run when the CI is launched against a specific NEURON branch,
-          # so some failures are still to be expected.
-          - os: { vm: ubuntu-latest, container: "debian:buster", flavour: debian }
-            branch_or_tag_and_default_wheel:
-              branch_or_tag: ""
-              default_wheel: neuron-nightly
       fail-fast: false
       
     steps:
