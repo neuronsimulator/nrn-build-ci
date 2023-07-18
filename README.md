@@ -2,8 +2,30 @@
 [![NEURON Build CI](https://github.com/neuronsimulator/nrn-build-ci/actions/workflows/build-neuron.yml/badge.svg)](https://github.com/neuronsimulator/nrn-build-ci/actions/workflows/build-neuron.yml)
 
 This repository hosts [scheduled GitHub Actions workflows](.github/workflows/neuron-ci.yaml) that verify that [the main NEURON repository](https://github.com/neuronsimulator/nrn) can be built and run on a variety of common Linux distributions and macOS versions.
-The default branch of NEURON is tested every night, and the latest tagged release is tested once a week.
-At present Ubuntu 18.04, Ubuntu 20.04, Fedora 34, Fedora 35, CentOS7, CentOS8, Debian Buster (10), Debian Bullseye (11), macOS 10.15 and macOS 11.0 are tested.
+The default branch of NEURON (and `neuron-nightly` wheel) is tested every night,
+and the latest tagged release (and corresponding `neuron` wheel) is tested once
+a week.
+At present Ubuntu 20.04, Ubuntu 22.04, Fedora 37, Fedora 38, CentOS7, CentOS
+Stream 8, CentOS Stream 9, Debian Bullseye (11), Debian Bookworm (12), macOS 11
+and macOS 12 are tested.
+
+The tested distributions are generally configured with the explicit
+name/version of the second-newest version of the distribution at the time,
+while a generic "latest" tag is used for the latest version (where available).
+
+There is currently an exception for the CentOS family, where three versions are
+retained because the third-newest, CentOS7, is still in use on the BlueBrain5
+system.
+
+This means that when a new version of a distribution is released, we
+automatically start testing it.
+When this happens, the old second-newest version generally becomes the
+third-newest version, and must be manually updated via pull request.
+This is often an opportunity to drop some version-specific scripts.
+The `fedora:latest` build is particulally useful, as Fedora has a relatively
+fast release cadence and often includes cutting-edge compilers and library
+versions; this means we can often spot issues via this build before they
+trickle down to other CI configurations and users in the community.
 
 The configuration of these builds serves as an up-to-date reference of how to build NEURON on each platform.
 
