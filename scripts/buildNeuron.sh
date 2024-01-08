@@ -26,7 +26,11 @@ export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackag
 
 # Install extra dependencies for NEURON into the virtual environment.
 pip install --upgrade -r nrn_requirements.txt
-pip install --upgrade -r ci_requirements.txt
+if [[ -f ci_requirements.txt ]]; then
+  pip install --upgrade -r ci_requirements.txt
+else
+  pip install --upgrade plotly "ipywidgets>=7.0.0"
+fi
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
