@@ -34,6 +34,8 @@ fi
 if [[ -f external/nmodl/requirements.txt ]]; then
   pip install --upgrade -r external/nmodl/requirements.txt
 fi
+# Needed for installation of older NEURON versions with Python 12
+pip install --upgrade setuptools
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
