@@ -74,10 +74,10 @@ jobs:
     strategy:
       matrix:
         os:
+        # GitHub Actions MacOS 13 runner
+        - { vm: macos-13, flavour: macOS }
         # GitHub Actions MacOS 12 runner
         - { vm: macos-12, flavour: macOS }
-        # GitHub Actions MacOS 11 runner
-        - { vm: macos-11, flavour: macOS }
         # CentOS7 Docker image
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
         # CentOS Stream 8 Docker image
