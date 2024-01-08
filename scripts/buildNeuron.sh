@@ -31,6 +31,9 @@ if [[ -f ci_requirements.txt ]]; then
 else
   pip install --upgrade plotly "ipywidgets>=7.0.0"
 fi
+if [[ -f external/nmodl/requirements.txt ]]; then
+  pip install --upgrade -r external/nmodl/requirements.txt
+fi
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
