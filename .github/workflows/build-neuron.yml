@@ -103,6 +103,11 @@ jobs:
       # Checkout the dedicated repository that steers the CI build
       - uses: actions/checkout@v3
 
+      # Pin to Python 3.9 until we backport 3.12 compatibility to 8.2.x
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
       # Install required packages using the system package manager. This
       # includes installing or updating the git client to a sufficiently
       # new version that the checkout of the main nrn repository does *not*
