@@ -98,7 +98,7 @@ jobs:
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
       fail-fast: false
-      
+
     steps:
       # Checkout the dedicated repository that steers the CI build
       - uses: actions/checkout@v3
@@ -115,6 +115,7 @@ jobs:
           OS_CONTAINER="${OS_CONTAINER##*/}"
           # replace : and . with _
           OS_CONTAINER="${OS_CONTAINER//[:.]/_}"
+          echo "${OS_CONTAINER}"
           CONTAINER_SCRIPT="scripts/install_${{matrix.os.flavour}}_${OS_CONTAINER}.sh"
           # pass this on to the next steps too, for convenience
           echo "OS_CONTAINER=${OS_CONTAINER}" >> "${GITHUB_ENV}"
@@ -157,7 +158,7 @@ jobs:
         run: |
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
-    
+
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
