@@ -103,6 +103,12 @@ jobs:
       # Checkout the dedicated repository that steers the CI build
       - uses: actions/checkout@v3
 
+      - name: Setup Python (for specific runners)
+        if: matrix.os.vm == 'macos-12' || matrix.os.vm == 'macos-13' || matrix.os.container == 'fedora:latest'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.os.python_version }}
+
       # Install required packages using the system package manager. This
       # includes installing or updating the git client to a sufficiently
       # new version that the checkout of the main nrn repository does *not*
