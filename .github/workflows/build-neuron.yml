@@ -75,9 +75,9 @@ jobs:
       matrix:
         os:
         # GitHub Actions MacOS 13 runner
-        - { vm: macos-13, flavour: macOS }
+        - { vm: macos-13, flavour: macOS, python_version: "3.11" }
         # GitHub Actions MacOS 12 runner
-        - { vm: macos-12, flavour: macOS }
+        - { vm: macos-12, flavour: macOS, python_version: "3.11" }
         # CentOS7 Docker image
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
         # CentOS Stream 8 Docker image
@@ -87,7 +87,7 @@ jobs:
         # Fedora 37 Docker image
         - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
         # Fedora Latest (38, at time of writing) Docker image
-        - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
+        - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat, python_version: "3.11" }
         # Ubuntu 20.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
         # Ubuntu Latest (22.04, at time of writing) Docker image
