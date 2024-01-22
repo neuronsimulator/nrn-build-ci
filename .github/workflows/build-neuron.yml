@@ -75,9 +75,9 @@ jobs:
       matrix:
         os:
         # GitHub Actions MacOS 13 runner
-        - { vm: macos-13, flavour: macOS, python_version: "3.11" }
+        - { vm: macos-13, flavour: macOS }
         # GitHub Actions MacOS 12 runner
-        - { vm: macos-12, flavour: macOS, python_version: "3.11" }
+        - { vm: macos-12, flavour: macOS }
         # CentOS7 Docker image
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
         # CentOS Stream 8 Docker image
@@ -87,7 +87,7 @@ jobs:
         # Fedora 37 Docker image
         - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
         # Fedora Latest (38, at time of writing) Docker image
-        - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat, python_version: "3.11" }
+        - { vm: ubuntu-latest, container: "fedora:latest", flavour: redhat }
         # Ubuntu 20.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
         # Ubuntu Latest (22.04, at time of writing) Docker image
@@ -102,12 +102,6 @@ jobs:
     steps:
       # Checkout the dedicated repository that steers the CI build
       - uses: actions/checkout@v3
-
-      - name: Setup Python (for specific runners)
-        if: matrix.os.vm == 'macos-12' || matrix.os.vm == 'macos-13' || matrix.os.container == 'fedora:latest'
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.os.python_version }}
 
       # Install required packages using the system package manager. This
       # includes installing or updating the git client to a sufficiently
@@ -131,6 +125,14 @@ jobs:
           if [ -f "${FLAVOUR_SCRIPT}" ]; then source "${FLAVOUR_SCRIPT}"; fi
         env:
           FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
+
+      # Fedora latest overrides our Python version so we run this afterwards
+      - name: Setup Python (for specific runners)
+        if: matrix.os.vm == 'macos-12' || matrix.os.vm == 'macos-13' || matrix.os.container == 'fedora:latest'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
 
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
