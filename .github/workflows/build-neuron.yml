@@ -128,7 +128,7 @@ jobs:
 
       # Fedora latest overrides our Python version so we run this afterwards
       - name: Setup Python (for specific runners)
-        if: matrix.os.vm == 'macos-12' || matrix.os.vm == 'macos-13' || matrix.os.container == 'fedora:latest'
+        if: matrix.os.vm == 'macos-12' || matrix.os.vm == 'macos-13'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
