@@ -2,7 +2,7 @@
 # Use DNF if available (not CentOS7), otherwise YUM
 CMD=$(command -v dnf || command -v yum)
 
-if [[ "${OS_CONTAINER}" == 'fedora:latest' ]]
+if [[ "${OS_CONTAINER}" == 'fedora_latest' ]]
 then
     # on Fedora latest we explicitly pin 3.11 for now
     PYTHON_VERSION="3.11"
