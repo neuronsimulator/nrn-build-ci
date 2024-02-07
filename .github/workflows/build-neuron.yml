@@ -2,6 +2,9 @@ name: Scheduled NEURON CI
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
   schedule:
     # Run at 2am every day
     - cron:  '0 2 * * *'
@@ -44,10 +47,10 @@ jobs:
         then
           # If we're not told to test a specific branch, test the default branch with neuron-nightly wheels
           values="{\"branch_or_tag\": \"\", \"default_wheel\": \"neuron-nightly\"}"
-          if [[ $(date +%u) == 1 ]] || [[ ${{ github.event_name }} == 'pull_request' ]]
+          if [[ $(date +%u) == 1 ]] || [[ ${{ github.event_name }} == 'pull_request' ]] || [[ ${{ github.event_name }} == 'push' ]]
           then
             # If it's a Monday, test the latest release (and latest released wheels) in addition
-            # Also test it on any PR
+            # Also test it on any PR, and any push to a PR
             tag_name="${{steps.get_latest_release.outputs.tag_name}}"
             values="${values}, {\"branch_or_tag\": \"${tag_name}\", \"default_wheel\": \"neuron==${tag_name}\"}"
           fi
