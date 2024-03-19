@@ -25,8 +25,17 @@ export PYTHON=$(command -v python)
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
 
 # Install extra dependencies for NEURON into the virtual environment.
-pip install --upgrade bokeh "cython<3" ipython matplotlib mpi4py numpy pytest \
-  pytest-cov scikit-build sympy
+pip install --upgrade -r nrn_requirements.txt
+if [[ -f ci_requirements.txt ]]; then
+  pip install --upgrade -r ci_requirements.txt
+else
+  pip install --upgrade plotly "ipywidgets>=7.0.0"
+fi
+if [[ -f external/nmodl/requirements.txt ]]; then
+  pip install --upgrade -r external/nmodl/requirements.txt
+fi
+# Needed for installation of older NEURON versions with Python 12
+pip install --upgrade setuptools
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}

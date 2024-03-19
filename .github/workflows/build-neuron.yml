@@ -2,6 +2,9 @@ name: Scheduled NEURON CI
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
   schedule:
     # Run at 2am every day
     - cron:  '0 2 * * *'
@@ -44,9 +47,10 @@ jobs:
         then
           # If we're not told to test a specific branch, test the default branch with neuron-nightly wheels
           values="{\"branch_or_tag\": \"\", \"default_wheel\": \"neuron-nightly\"}"
-          if [[ $(date +%u) == 1 ]]
+          if [[ $(date +%u) == 1 ]] || [[ ${{ github.event_name }} == 'pull_request' ]] || [[ ${{ github.event_name }} == 'push' ]]
           then
             # If it's a Monday, test the latest release (and latest released wheels) in addition
+            # Also test it on any PR, and any push to a PR
             tag_name="${{steps.get_latest_release.outputs.tag_name}}"
             values="${values}, {\"branch_or_tag\": \"${tag_name}\", \"default_wheel\": \"neuron==${tag_name}\"}"
           fi
@@ -74,10 +78,10 @@ jobs:
     strategy:
       matrix:
         os:
+        # GitHub Actions MacOS 13 runner
+        - { vm: macos-13, flavour: macOS }
         # GitHub Actions MacOS 12 runner
         - { vm: macos-12, flavour: macOS }
-        # GitHub Actions MacOS 11 runner
-        - { vm: macos-11, flavour: macOS }
         # CentOS7 Docker image
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
         # CentOS Stream 8 Docker image
@@ -136,7 +140,7 @@ jobs:
           if [ -n "${branch_or_tag}" ]; then BRANCH_OPT="--branch=${branch_or_tag}"; fi
           git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
           # Init submodules for testing purposes
-          cd nrn && git submodule update --init
+          cd nrn && git submodule update --init --recursive
 
       # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
       # are root. This is different from when we use the GitHub Actions images
