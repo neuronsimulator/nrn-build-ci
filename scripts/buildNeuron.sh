@@ -78,4 +78,4 @@ echo "------- Install NEURON -------"
 cmake --build . -- install
 
 echo "------- Run test suite -------"
-ctest -VV -j ${PARALLEL_JOBS} -R 'test_multi_gridding_mix'
+ctest -VV -j ${PARALLEL_JOBS} -R 'rxdmod_tests::rxd_tests'
