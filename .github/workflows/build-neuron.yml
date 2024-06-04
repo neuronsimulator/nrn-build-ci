@@ -84,8 +84,8 @@ jobs:
         - { vm: macos-12, flavour: macOS }
         # CentOS7 Docker image
         - { vm: ubuntu-latest, container: "centos:7", flavour: redhat }
-        # CentOS Stream 8 Docker image
-        - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream8", flavour: redhat }
+        # Alma Linux 8 Docker image
+        - { vm: ubuntu-latest, container: "almalinux:8.10", flavour: redhat }
         # CentOS Stream 9 Docker image
         - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream9", flavour: redhat }
         # Fedora 37 Docker image
