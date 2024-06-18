@@ -25,7 +25,6 @@ export PYTHON=$(command -v python)
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
 
 # Install extra dependencies for NEURON into the virtual environment.
-pip install --upgrade -r nrn_requirements.txt
 if [[ -f ci_requirements.txt ]]; then
   pip install --upgrade -r ci_requirements.txt
 else
@@ -34,6 +33,8 @@ fi
 if [[ -f external/nmodl/requirements.txt ]]; then
   pip install --upgrade -r external/nmodl/requirements.txt
 fi
+# install dependencies for NEURON itself
+pip install --upgrade -r nrn_requirements.txt
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
 
