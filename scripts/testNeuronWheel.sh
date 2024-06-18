@@ -13,6 +13,8 @@ if [[ -d "${DROP_DIR}" ]]; then
   ${PYTHON} -m venv wheel_test_venv
   . wheel_test_venv/bin/activate
   export PYTHON=$(command -v python)
+  # install numpy 2
+  pip install "numpy<2"
   # install wheel from drop
   pip install --find-links ${DROP_DIR} neuron-nightly
   # get Azure version to avoid downloading something else in the venv for test_wheels.sh
