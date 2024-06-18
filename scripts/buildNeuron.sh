@@ -35,6 +35,8 @@ if [[ -f external/nmodl/requirements.txt ]]; then
 fi
 # install dependencies for NEURON itself
 pip install --upgrade -r nrn_requirements.txt
+# explicit workaround for numpy 2
+pip install "numpy<2"
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
 
