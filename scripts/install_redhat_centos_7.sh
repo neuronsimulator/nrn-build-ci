@@ -2,6 +2,14 @@
 # Use MPICH instead of OpenMPI on CentOS7, see #51.
 # This variable will be read by install_redhat.sh
 mpi_lib=mpich-devel
+
+# CentOS 7 is EOL as of 2024-06-30, so we need to use the vault
+sed -i 's|mirrorlist.centos.org|vault.centos.org|g' /etc/yum.repos.d/CentOS-Base.repo
+sed -i 's|#baseurl=http://vault.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Base.repo
+yum clean all
+yum makecache
+
+# actually install the packages
 # EPEL is needed to get CMake 3 in CentOS7
 # SCL is needed to get a modern toolchain in CentOS7
 yum install -y epel-release centos-release-scl centos-release-scl-rh
