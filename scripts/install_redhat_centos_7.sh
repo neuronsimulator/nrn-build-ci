@@ -14,33 +14,33 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 [updates]
 name=CentOS-\$releasever - Updates
 baseurl=http://vault.centos.org/7.9.2009/updates/\$basearch/
-gpgcheck=1
+gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [extras]
 name=CentOS-\$releasever - Extras
 baseurl=http://vault.centos.org/7.9.2009/extras/\$basearch/
-gpgcheck=1
+gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [centosplus]
 name=CentOS-\$releasever - Plus
 baseurl=http://vault.centos.org/7.9.2009/centosplus/\$basearch/
-gpgcheck=1
+gpgcheck=0
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [centos-sclo-rh]
 name=CentOS-\$releasever - SCLo rh
 baseurl=http://vault.centos.org/7.9.2009/sclo/\$basearch/rh/
-gpgcheck=1
+gpgcheck=0
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [centos-sclo-sclo]
 name=CentOS-\$releasever - SCLo sclo
 baseurl=http://vault.centos.org/7.9.2009/sclo/\$basearch/sclo/
-gpgcheck=1
+gpgcheck=0
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 EOF
