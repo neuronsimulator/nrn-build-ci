@@ -32,7 +32,7 @@ else
   pip install --upgrade plotly "ipywidgets>=7.0.0"
 fi
 if [[ -f external/nmodl/requirements.txt ]]; then
-  pip install --upgrade -r external/nmodl/requirements.txt
+  pip install --upgrade -r external/nmodl/requirements.txt 'numpy<2'
 fi
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
