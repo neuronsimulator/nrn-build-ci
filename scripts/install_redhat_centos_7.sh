@@ -6,40 +6,40 @@ mpi_lib=mpich-devel
 # CentOS 7 is EOL as of 2024-06-30, so we need to use the vault
 contents=$(cat << EOF
 [base]
-name=CentOS-$releasever - Base
-baseurl=http://vault.centos.org/7.9.2009/os/$basearch/
+name=CentOS-\$releasever - Base
+baseurl=http://vault.centos.org/7.9.2009/os/\$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [updates]
-name=CentOS-$releasever - Updates
-baseurl=http://vault.centos.org/7.9.2009/updates/$basearch/
+name=CentOS-\$releasever - Updates
+baseurl=http://vault.centos.org/7.9.2009/updates/\$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [extras]
-name=CentOS-$releasever - Extras
-baseurl=http://vault.centos.org/7.9.2009/extras/$basearch/
+name=CentOS-\$releasever - Extras
+baseurl=http://vault.centos.org/7.9.2009/extras/\$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [centosplus]
-name=CentOS-$releasever - Plus
-baseurl=http://vault.centos.org/7.9.2009/centosplus/$basearch/
+name=CentOS-\$releasever - Plus
+baseurl=http://vault.centos.org/7.9.2009/centosplus/\$basearch/
 gpgcheck=1
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [centos-sclo-rh]
-name=CentOS-$releasever - SCLo rh
-baseurl=http://vault.centos.org/7.9.2009/sclo/$basearch/rh/
+name=CentOS-\$releasever - SCLo rh
+baseurl=http://vault.centos.org/7.9.2009/sclo/\$basearch/rh/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 [centos-sclo-sclo]
-name=CentOS-$releasever - SCLo sclo
-baseurl=http://vault.centos.org/7.9.2009/sclo/$basearch/sclo/
+name=CentOS-\$releasever - SCLo sclo
+baseurl=http://vault.centos.org/7.9.2009/sclo/\$basearch/sclo/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
