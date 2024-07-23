@@ -46,6 +46,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 EOF
 )
 echo "${contents}" > /etc/yum.repos.d/CentOS-Base.repo
+curl -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 https://vault.centos.org/RPM-GPG-KEY-CentOS-7
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 yum clean all
 yum makecache
