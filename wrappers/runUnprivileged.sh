@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 if [ -n "${OS_CONTAINER}" ]
 then
   # We are running under Docker
