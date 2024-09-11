@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+export LMOD_SH_DBG_ON=1
 if [ -n "${OS_CONTAINER}" ]
 then
   # We are running under Docker
