@@ -158,6 +158,7 @@ jobs:
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
+          LMOD_SH_DBG_ON: 1
 
       # Download specific wheels from Azure via workflow dispatch
       - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
