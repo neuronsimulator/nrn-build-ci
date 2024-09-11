@@ -5,7 +5,9 @@
 # This is working around GitHub Actions running commands in non-login shells
 # that would otherwise not have the `module` command available.
 export LMOD_SH_DBG_ON=1
+set +e
 source /etc/profile.d/modules.sh
+set -e
 # ---
 # --- End GitHub-Actions-specific code ---
 # ---
