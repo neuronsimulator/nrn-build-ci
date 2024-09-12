@@ -5,17 +5,13 @@ This repository hosts [scheduled GitHub Actions workflows](.github/workflows/neu
 The default branch of NEURON (and `neuron-nightly` wheel) is tested every night,
 and the latest tagged release (and corresponding `neuron` wheel) is tested once
 a week.
-At present Ubuntu 20.04, Ubuntu 22.04, Fedora 37, Fedora 38, CentOS7, CentOS
-Stream 8, CentOS Stream 9, Debian Bullseye (11), Debian Bookworm (12), macOS 11
-and macOS 12 are tested.
+At present, Ubuntu 20.04, Ubuntu 24.04, Fedora 37, Fedora 40, CentOS Stream
+9, Alma Linux 8, Debian Bullseye (11), Debian Bookworm (12), macOS 12 and
+macOS 13 are tested.
 
 The tested distributions are generally configured with the explicit
 name/version of the second-newest version of the distribution at the time,
 while a generic "latest" tag is used for the latest version (where available).
-
-There is currently an exception for the CentOS family, where three versions are
-retained because the third-newest, CentOS7, is still in use on the BlueBrain5
-system.
 
 This means that when a new version of a distribution is released, we
 automatically start testing it.
@@ -35,7 +31,7 @@ The system packages needed on each platform are listed in the pair of scripts:
 scripts/install_{flavour}_{container}.sh [this file may be missing if no container-specific setup is needed]
 scripts/install_{flavour}.sh
 ```
-Taking CentOS7 (a RedHat based distribution) as an example, the scripts [install_redhat_centos:7.sh](scripts/install_redhat_centos:7.sh) and [install_redhat.sh](scripts/install_redhat.sh) install the required system packages that are not already included in the [centos:7](https://hub.docker.com/_/centos) image on Docker Hub.
+Taking Alma Linux 8 (a RedHat based distribution) as an example, the scripts [install_redhat_almalinux_8_10.sh](scripts/install_redhat_almalinux_8_10.sh) and [install_redhat.sh](scripts/install_redhat.sh) install the required system packages that are not already included in the [almalinux:8.10](https://hub.docker.com/_/almalinux) image on Docker Hub.
 
 Some of the content of these scripts is specific to the GitHub Actions environment in which they are regularly tested; this is commented in the following way:
 ```sh
@@ -58,14 +54,14 @@ scripts/environment.sh
 ```
 In a local installation, you might prefer to place these commands in a `~/.bashrc` or `~/.zshrc` file.
 
-When using RedHat-derived Linux distributions, such as Fedora and CentOS, some dependencies may be made available using [Software Collections](https://www.softwarecollections.org/en/).
+When using RedHat-derived Linux distributions, such as Fedora and CentOS Stream, some dependencies may be made available using [Software Collections](https://www.softwarecollections.org/en/).
 These are enabled using the `scl enable collection_name command`, which launches a subshell and cannot trivially be included in the `environmentXXX.sh` scripts above.
 For interactive use, one can simply run
 ```
 scl enable collection_name bash
 ```
 to get a shell with the given collection enabled.
-> When running in GitHub Actions, the `scl enable ...` command is injected in the [runUnprivileged.sh](wrappers/runUnprivileged.sh) wrapper, based on `SOFTWARE_COLLECTIONS_*` environment modules set in the [top-level YAML configuration](.github/workflows/neuron-ci.yaml). This is, for example, used to install a modern compiler toolchain on CentOS7.
+> When running in GitHub Actions, the `scl enable ...` command is injected in the [runUnprivileged.sh](wrappers/runUnprivileged.sh) wrapper, based on `SOFTWARE_COLLECTIONS_*` environment modules set in the [top-level YAML configuration](.github/workflows/neuron-ci.yaml).
 
 ## Extra dependencies and NEURON installation
 The installation of extra packages (via `pip`) and the installation of NEURON itself is steered by the [buildNeuron.sh](scripts/buildNeuron.sh) script.
