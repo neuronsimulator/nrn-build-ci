@@ -80,4 +80,4 @@ jobs:
           python3 -m venv env
           source env/bin/activate
           env/bin/python -m pip install neuron-nightly pytest
-          env/bin/python -m pytest -k test_multi_gridding_mix
+          env/bin/python -m pytest -k test_multi_gridding_mix test/
