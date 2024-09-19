@@ -77,7 +77,7 @@ jobs:
           git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
           # Init submodules for testing purposes
           cd nrn && git submodule update --init --recursive
-          python -m venv env
+          python3 -m venv env
           source env/bin/activate
           env/bin/python -m pip install neuron-nightly pytest
           env/bin/python -m pytest -k test_multi_gridding_mix
