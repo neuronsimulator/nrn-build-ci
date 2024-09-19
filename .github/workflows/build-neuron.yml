@@ -77,46 +77,7 @@ jobs:
           git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
           # Init submodules for testing purposes
           cd nrn && git submodule update --init --recursive
-
-      # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
-      # are root. This is different from when we use the GitHub Actions images
-      # directly, and leads to errors from MPI later. If we run inside Docker,
-      # create a regular user to run as.
-      - name: Setup unprivileged user
-        # If we run in a native GitHub Actions container, without Docker, this
-        # isn't needed
-        if: matrix.os.container
-        run: |
-          useradd --create-home ${UNPRIVILEGED_USER}
-          chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
-    
-      # Put all the remaining steps in one job that runs as an unprivileged user
-      - name: Build and test NEURON
-        working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
-        env:
-          INSTALL_DIR : ${{github.workspace}}/nrn/install
-
-      # Download specific wheels from Azure via workflow dispatch
-      - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
-        if: github.event.inputs.azure_drop_url
-        working-directory: ${{github.workspace}}
-        run: ./scripts/getAzureDrop.sh '${{ github.event.inputs.azure_drop_url }}'
-
-      # Test the wheels. If an Azure URL was given, those wheels are used. Otherwise:
-      # - default branch (master): neuron-nightly
-      # - latest release (tag X.Y): neuron==X.Y
-      # - feature branch: wheels only tested if a URL is given
-      - name: Test (nightly) NEURON wheel
-        if: github.event.inputs.azure_drop_url || matrix.branch_or_tag_and_default_wheel.default_wheel
-        working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
-        env:
-          NRN_PACKAGE: ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
-          NEURON_BRANCH_OR_TAG: ${{matrix.branch_or_tag}}
-
-      # This step will set up an SSH connection on tmate.io for live debugging
-      # of non-Docker runs that failed.
-      - name: live debug session on failure
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
+          python -m venv env
+          source env/bin/activate
+          env/bin/python -m pip install neuron-nightly pytest
+          env/bin/python -m pytest -k test_multi_gridding_mix
