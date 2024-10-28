@@ -71,6 +71,7 @@ jobs:
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
       OS_FLAVOUR: ${{matrix.os.flavour}}
+      PY_MAX_VERSION: 3.12
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
       # Extra software collections to be installed and enabled on CentOS7
       SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 rh-git218 rh-python38
@@ -127,6 +128,12 @@ jobs:
           if [ -f "${FLAVOUR_SCRIPT}" ]; then source "${FLAVOUR_SCRIPT}"; fi
         env:
           FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
+
+      - if: ${{matrix.os.flavour}} == 'macOS'
+        name: Set up Python@${{ env.PY_MAX_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PY_MAX_VERSION }}
 
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
