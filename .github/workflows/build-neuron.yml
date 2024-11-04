@@ -130,7 +130,7 @@ jobs:
         env:
           FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
 
-      - if: ${{matrix.os.flavour}} == 'macOS'
+      - if: ${{matrix.os.flavour}} == 'macOS' || ${{matrix.os.container}} == 'fedora:latest'
         name: Set up Python@${{ env.MACOSX_PY_VERSION }}
         uses: actions/setup-python@v5
         with:
