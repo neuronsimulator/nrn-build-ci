@@ -138,7 +138,9 @@ jobs:
 
       - if: ${{ matrix.os.container && matrix.os.container == 'fedora:latest' }}
         name: Set NRN_PYTHON
-        run: echo "NRN_PYTHON=$(command -v python3)" >> "${GITHUB_ENV}"
+        run: |
+          echo "NRN_PYTHON=$(command -v python3)" >> "${GITHUB_ENV}"
+          echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> "${GITHUB_ENV}"
 
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
