@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 # Set up the runtime environment by sourcing the environmentXXX.sh scripts.
 # For a local installation you might have put the content of those scripts
 # directly into your ~/.bashrc or ~/.zshrc

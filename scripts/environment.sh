@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 # Set up the runtime environment by sourcing the environmentXXX.sh scripts in
 # the same directory as this script.
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
