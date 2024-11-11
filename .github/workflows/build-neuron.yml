@@ -82,8 +82,6 @@ jobs:
         os:
         # GitHub Actions MacOS 13 runner
         - { vm: macos-13, flavour: macOS }
-        # GitHub Actions MacOS 12 runner
-        - { vm: macos-12, flavour: macOS }
         # Alma Linux 8 Docker image
         - { vm: ubuntu-latest, container: "almalinux:8.10", flavour: redhat }
         # CentOS Stream 9 Docker image
