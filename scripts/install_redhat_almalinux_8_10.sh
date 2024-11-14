@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 # Enable the (official) PowerTools repository. This provides Ninja.
 dnf install -y dnf-plugins-core "python3${PYTHON_MIN_VERSION}-devel" gcc-toolset-9-gcc gcc-toolset-9-gcc-c++
 NRN_PYTHON="$(command -v "python3.${PYTHON_MIN_VERSION}")"
