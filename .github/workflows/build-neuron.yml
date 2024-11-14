@@ -72,12 +72,10 @@ jobs:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
       OS_FLAVOUR: ${{matrix.os.flavour}}
       # min minor supported version of Python
-      MIN_PYTHON_VERSION: '9'
+      MIN_MINOR_PYTHON_VERSION: '9'
       # max minor supported version of Python
-      MAX_PYTHON_VERSION: '12'
+      MAX_MINOR_PYTHON_VERSION: '12'
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
-      # Extra software collections to be installed and enabled on CentOS7
-      SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 rh-git218 rh-python38
 
     strategy:
       matrix:
@@ -132,10 +130,10 @@ jobs:
 
       # MacOS has 3.13 as default, so we instead install the max supported one
       - if: startsWith(matrix.os.flavour, 'macOS')
-        name: Set up Python@${{ env.MAX_PYTHON_VERSION }}
+        name: Set up Python@3.${{ env.MAX_MINOR_PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.${{ env.MAX_PYTHON_VERSION }}"
+          python-version: "3.${{ env.MAX_MINOR_PYTHON_VERSION }}"
 
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there

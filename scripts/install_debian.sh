@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 # ---
 # --- Begin GitHub-Actions-specific code ---
 # ---
@@ -16,20 +17,20 @@ fi
 if [[ -z "${NRN_PYTHON}" ]]; then
   apt-get install -y python3-dev python3-venv
 
-  python_version="$(python3 -c 'import sys;print(sys.version_info.minor)')"
-  if [[ "${python_version}" -lt "${MIN_PYTHON_VERSION}" ]]
+  python_minor_version="$(python3 -c 'import sys;print(sys.version_info.minor)')"
+  if [[ "${python_minor_version}" -lt "${MIN_MINOR_PYTHON_VERSION}" ]]
   then
       # install min supported Python version from external repo
       apt-get install -y software-properties-common
       add-apt-repository -y ppa:deadsnakes/ppa
-      apt-get install -y "python3.${MIN_PYTHON_VERSION}-dev" "python3.${MIN_PYTHON_VERSION}-venv"
-      NRN_PYTHON="$(command -v "python3.${MIN_PYTHON_VERSION}")"
+      apt-get install -y "python3.${MIN_MINOR_PYTHON_VERSION}-dev" "python3.${MIN_MINOR_PYTHON_VERSION}-venv"
+      NRN_PYTHON="$(command -v "python3.${MIN_MINOR_PYTHON_VERSION}")"
       export NRN_PYTHON
-  elif [[ "${python_version}" -gt "${MAX_PYTHON_VERSION}" ]]
+  elif [[ "${python_minor_version}" -gt "${MAX_MINOR_PYTHON_VERSION}" ]]
   then
       # we do not want to downgrade the default version (this is _very_ unlikely to happen on Ubuntu/Debian though)
-      printf "Distribution %s comes with a version of Python that is too new (%s) for NEURON\n" "$(cat /etc/lsb-release)" "3.${python_version}"
-      printf "Please downgrade it to at most Python %s\n" "3.${python_version}"
+      printf "Distribution %s comes with a version of Python that is too new (%s) for NEURON\n" "$(cat /etc/lsb-release)" "3.${python_minor_version}"
+      printf "Please downgrade it to at most Python %s\n" "3.${MAX_MINOR_PYTHON_VERSION}"
       exit 1
   else
       NRN_PYTHON="$(command -v python3)"
