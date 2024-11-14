@@ -131,7 +131,7 @@ jobs:
           FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
 
       # MacOS has 3.13 as default, so we instead install the max supported one
-      - if: ${{matrix.os.flavour}} == 'macOS'
+      - if: startsWith(matrix.os.flavour, 'macOS')
         name: Set up Python@${{ env.MAX_PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
