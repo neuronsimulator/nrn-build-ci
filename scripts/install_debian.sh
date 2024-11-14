@@ -11,7 +11,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y bison cmake flex git libncurses-dev libmpich-dev libssl-dev \
   libx11-dev libxcomposite-dev ninja-build mpich libreadline-dev sudo wget unzip
-if [[ "${DO_NOT_INSTALL_BOOST}" != "true" ]]; then
+if [[ "${DO_NOT_INSTALL_BOOST:-false}" != "true" ]]; then
   apt-get install -y libboost-all-dev
 fi
 if [[ -z "${NRN_PYTHON}" ]]; then
