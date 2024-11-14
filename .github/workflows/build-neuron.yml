@@ -76,6 +76,8 @@ jobs:
       # max minor supported version of Python
       MAX_PYTHON_VERSION: '12'
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
+      # Extra software collections to be installed and enabled on CentOS7
+      SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 rh-git218 rh-python38
 
     strategy:
       matrix:
