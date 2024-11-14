@@ -22,7 +22,7 @@ if [[ -z "${NRN_PYTHON}" ]]; then
       # install min supported Python version from external repo
       apt-get install -y software-properties-common
       add-apt-repository -y ppa:deadsnakes/ppa
-      apt-get install -y "python3.${MIN_PYTHON_VERSION}"
+      apt-get install -y "python3.${MIN_PYTHON_VERSION}-dev" "python3.${MIN_PYTHON_VERSION}-venv"
       NRN_PYTHON="$(command -v "python3.${MIN_PYTHON_VERSION}")"
       export NRN_PYTHON
   elif [[ "${python_version}" -gt "${MAX_PYTHON_VERSION}" ]]
