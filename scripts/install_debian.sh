@@ -15,6 +15,26 @@ if [[ "${DO_NOT_INSTALL_BOOST}" != "true" ]]; then
 fi
 if [[ -z "${NRN_PYTHON}" ]]; then
   apt-get install -y python3-dev python3-venv
-  export NRN_PYTHON=$(command -v python3)
+
+  python_version="$(python3 -c 'import sys;print(sys.version_info.minor)')"
+  if [[ "${python_version}" -lt "${MIN_PYTHON_VERSION}" ]]
+  then
+      # install min supported Python version from external repo
+      apt-get install -y software-properties-common
+      add-apt-repository -y ppa:deadsnakes/ppa
+      apt-get install -y "python3.${MIN_PYTHON_VERSION}"
+      NRN_PYTHON="$(command -v "python3.${MIN_PYTHON_VERSION}")"
+      export NRN_PYTHON
+  elif [[ "${python_version}" -gt "${MAX_PYTHON_VERSION}" ]]
+  then
+      # we do not want to downgrade the default version (this is _very_ unlikely to happen on Ubuntu/Debian though)
+      printf "Distribution %s comes with a version of Python that is too new (%s) for NEURON\n" "$(cat /etc/lsb-release)" "3.${python_version}"
+      printf "Please downgrade it to at most Python %s\n" "3.${python_version}"
+      exit 1
+  else
+      NRN_PYTHON="$(command -v python3)"
+      export NRN_PYTHON
+  fi
+  # export to github env
   echo "NRN_PYTHON=${NRN_PYTHON}" >> $GITHUB_ENV
 fi
