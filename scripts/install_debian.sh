@@ -14,7 +14,7 @@ apt-get install -y bison cmake flex git libncurses-dev libmpich-dev libssl-dev \
 if [[ "${DO_NOT_INSTALL_BOOST:-false}" != "true" ]]; then
   apt-get install -y libboost-all-dev
 fi
-if [[ -z "${NRN_PYTHON}" ]]; then
+if [[ -z "${NRN_PYTHON:-}" ]]; then
   apt-get install -y python3-dev python3-venv
 
   python_minor_version="$(python3 -c 'import sys;print(sys.version_info.minor)')"
