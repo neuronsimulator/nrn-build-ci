@@ -70,28 +70,49 @@ This closely mirrors the instructions [in the main NEURON repository](https://gi
 # Wheels testing - Manual workflow
 
 Given a build (PR, master, ...) that generates wheel artifacts, it is possible to test those specific wheels on the different platforms covered by this CI.
-The GitHub action build publishes an artifact called `drop`, which contains all wheels built by the pipeline.
 
-Here are the steps to follow: 
+## GitHub Actions
 
-* Retrieve the artifact URL
+As of version 9, wheels for NEURON are built exclusively using GitHub Actions. All of the jobs which build wheels are located at [this link](https://github.com/neuronsimulator/nrn/actions/workflows/wheels.yml). To access a particular artifact containing the wheels, proceed as follows:
 
-  * From the build page, click on `published`:
-    
-    ![](images/drop1.png)
-  * then from the artifact page retrieve the drop download url:
-    
-    ![](images/drop2.png)
+* click on a particular run:
 
-* Launch the CI manually
-  1) click on `Actions` tab
-  2) click on `Scheduled NEURON CI` tab under `Workflows`
-  3) click on `Run workflow`
-  4) input `Azure drop (artifacts) url` and click `Run workflow` (leave `NEURON branch to test`) blank.
+  ![](images/gha1.png)
+* scroll down to "Artifacts"
+* retrieve the artifact URL by right-clicking on the "wheels" artifact, and copy the link
+
+  ![](images/gha2.png)
+
+## Azure (deprecated)
+
+**NOTE**: for backwards compatibility, one can still use wheels built by Azure for testing, but this method is deprecated and will be removed in the future.
+As an alternative, please follow the instructions under "GitHub Actions" above.
+
+The Azure build publishes an artifact called `drop`, which contains all wheels built by the pipeline.
+
+Here are the steps to follow to obtain an artifact:
+
+* From the build page, click on `published`:
+
+  ![](images/drop1.png)
+* then from the artifact page retrieve the drop download URL:
+
+  ![](images/drop2.png)
+
+
+## Launching the CI
+
+To launch the CI manually:
+
+1) click on the `Actions` tab of this repository
+2) click on `Scheduled NEURON CI` tab under `Workflows`
+3) click on `Run workflow`
+4) input `Artifacts URL` and click `Run workflow` (leave `NEURON branch to test`) blank.
      
-  ![](images/manual-dispatch.png)
+![](images/manual-dispatch.png)
 
 # Testing a NEURON feature branch
+
 By default the GitHub Actions workflow in this repository runs every night, and on modifications made to the `nrn-build-ci` repository itself.
 You can also use the same workflow to manually trigger testing a feature branch of NEURON, for example if you have a NEURON pull request that is fixing an issue identified by one of the scheduled builds in this repository.
 In that case, follow the instructions just above to launch a manual job, but instead of filling the `Azure drop (artifacts) url`, leave that blank and put the name of your NEURON feature branch in `NEURON branch to test`.

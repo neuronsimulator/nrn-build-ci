@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       artifact_url:
-        description: 'URL of the artifact containing the wheels'
+        description: 'Artifacts URL'
       neuron_branch:
         description: 'NEURON branch to test'
         default: ''
