@@ -26,8 +26,12 @@ jobs:
   provide_version_matrix:
     runs-on: ubuntu-latest
     steps:
+    - name: check Azure drop URL exists -> ${{ github.event.inputs.azure_drop_url }}
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.azure_drop_url && startsWith(github.event.inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
+      run: |
+        curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
     - name: check artifact URL exists -> ${{ github.event.inputs.artifact_url }}
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url && startsWith(github.event.inputs.artifact_url, 'https://api.github.com/repos/neuronsimulator/')
       run: |
         ARTIFACT_ID=$(echo "${{ github.event.inputs.artifact_url }}" | grep --color=never -oE '[0-9]+$')
         echo "Extracted Artifact ID: ${ARTIFACT_ID}"
@@ -106,7 +110,7 @@ jobs:
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
       fail-fast: false
-      
+
     steps:
       # Checkout the dedicated repository that steers the CI build
       - uses: actions/checkout@v3
@@ -163,7 +167,7 @@ jobs:
         run: |
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
-    
+
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
