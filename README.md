@@ -67,16 +67,16 @@ to get a shell with the given collection enabled.
 The installation of extra packages (via `pip`) and the installation of NEURON itself is steered by the [buildNeuron.sh](scripts/buildNeuron.sh) script.
 This closely mirrors the instructions [in the main NEURON repository](https://github.com/neuronsimulator/nrn/#build-cmake).
 
-# Azure wheels testing - Manual workflow
+# Wheels testing - Manual workflow
 
-Given an Azure build (PR, master, ...), it is possible to test those specific wheels on the different platforms covered by this CI.
-The azure build publishes an artifact called `drop`, which contains all wheels built by the pipeline.
+Given a build (PR, master, ...) that generates wheel artifacts, it is possible to test those specific wheels on the different platforms covered by this CI.
+The GitHub action build publishes an artifact called `drop`, which contains all wheels built by the pipeline.
 
 Here are the steps to follow: 
 
-* Retrieve the Azure drop url
+* Retrieve the artifact URL
 
-  * From the azure build page, click on `published`:
+  * From the build page, click on `published`:
     
     ![](images/drop1.png)
   * then from the artifact page retrieve the drop download url:

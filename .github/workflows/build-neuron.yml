@@ -10,8 +10,8 @@ on:
     - cron:  '0 2 * * *'
   workflow_dispatch:
     inputs:
-      azure_drop_url:
-        description: 'Azure drop (artifacts) url'
+      artifact_url:
+        description: 'URL of the artifact containing the wheels'
       neuron_branch:
         description: 'NEURON branch to test'
         default: ''
@@ -26,10 +26,16 @@ jobs:
   provide_version_matrix:
     runs-on: ubuntu-latest
     steps:
-    - name: check Azure drop url exists -> ${{ github.event.inputs.azure_drop_url }}
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.azure_drop_url
+    - name: check artifact URL exists -> ${{ github.event.inputs.artifact_url }}
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url
       run: |
-        curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
+        ARTIFACT_ID=$(echo "${{ github.event.inputs.artifact_url }}" | grep --color=never -oE '[0-9]+$')
+        echo "Extracted Artifact ID: ${ARTIFACT_ID}"
+        curl -L -sfS \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.NRN_BUILD_CI_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/neuronsimulator/nrn/actions/artifacts/${ARTIFACT_ID}/zip" -o drop.zip
     - name: Get latest release information
       id: get_latest_release
       uses: joutvhu/get-release@v1
@@ -56,7 +62,7 @@ jobs:
           fi
           echo "matrix=[${values}]" >> $GITHUB_OUTPUT
         else
-          # Test the given branch with no wheels by default. If an Azure URL is given, those wheels will be used.
+          # Test the given branch with no wheels by default. If an artifact URL is given, those wheels will be used.
           echo "matrix=[{\"branch_or_tag\": \"${{github.event.inputs.neuron_branch}}\", \"default_wheel\": \"\"}]" >> $GITHUB_OUTPUT
         fi
     outputs:
@@ -165,18 +171,18 @@ jobs:
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
 
-      # Download specific wheels from Azure via workflow dispatch
-      - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
-        if: github.event.inputs.azure_drop_url
+      # Download specific wheels from URL via workflow dispatch
+      - name: Download artifacts -> ${{ github.event.inputs.artifact_url }}
+        if: github.event.inputs.artifact_url
         working-directory: ${{github.workspace}}
-        run: ./scripts/getAzureDrop.sh '${{ github.event.inputs.azure_drop_url }}'
+        run: ./scripts/getArtifacts.sh '${{ github.event.inputs.artifact_url }}'
 
-      # Test the wheels. If an Azure URL was given, those wheels are used. Otherwise:
+      # Test the wheels. If an artifact URL was given, those wheels are used. Otherwise:
       # - default branch (master): neuron-nightly
       # - latest release (tag X.Y): neuron==X.Y
       # - feature branch: wheels only tested if a URL is given
       - name: Test (nightly) NEURON wheel
-        if: github.event.inputs.azure_drop_url || matrix.branch_or_tag_and_default_wheel.default_wheel
+        if: github.event.inputs.artifact_url || matrix.branch_or_tag_and_default_wheel.default_wheel
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
         env:
