@@ -31,7 +31,7 @@ jobs:
       run: |
         curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
     - name: check artifact URL exists -> ${{ github.event.inputs.artifact_url }}
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url && startsWith(github.event.inputs.artifact_url, 'https://github.com//neuronsimulator/')
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url && startsWith(github.event.inputs.artifact_url, 'https://github.com/neuronsimulator/')
       run: |
         ARTIFACT_ID=$(echo "${{ github.event.inputs.artifact_url }}" | grep --color=never -oE '[0-9]+$')
         echo "Extracted Artifact ID: ${ARTIFACT_ID}"
