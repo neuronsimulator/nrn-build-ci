@@ -12,14 +12,13 @@ export PYTHON=${NRN_PYTHON:-$(command -v python3)}
 if [[ -d "${DROP_DIR}" ]]; then
   ${PYTHON} -m venv wheel_test_venv
   . wheel_test_venv/bin/activate
-  PYTHON="$(command -v python)"
-  export PYTHON
-  # install wheel from drop
-  pip install --find-links "${DROP_DIR}" neuron-nightly
-  # get version of wheel from artifact to avoid downloading something else in the venv for test_wheels.sh
+  export PYTHON=$(command -v python)
+  # install wheel from artifact
+  pip install --find-links ${DROP_DIR} neuron-nightly
+  # get version of NEURON to avoid downloading something else in the venv for test_wheels.sh
   NRN_PACKAGE="neuron-nightly==$(pip show neuron-nightly | grep Version | cut -d ' ' -f2 )"
   USE_VENV="false"
 fi
 # Run NEURON's wheel testing script
 echo "Testing NEURON wheel: ${NRN_PACKAGE} (venv=${USE_VENV})"
-./packaging/python/test_wheels.sh "${PYTHON}" "${NRN_PACKAGE}" "${USE_VENV}"
+./packaging/python/test_wheels.sh ${PYTHON} ${NRN_PACKAGE} ${USE_VENV}
