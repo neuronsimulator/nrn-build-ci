@@ -79,7 +79,7 @@ As of version 9, wheels for NEURON are built exclusively using GitHub Actions. A
 
   ![](images/gha1.png)
 * scroll down to "Artifacts"
-* retrieve the artifact URL by right-clicking on the "wheels" artifact, and copy the link
+* retrieve the artifact URL by right-clicking on the "wheels" artifact, and copy the link:
 
   ![](images/gha2.png)
 
