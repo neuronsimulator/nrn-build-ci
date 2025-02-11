@@ -178,6 +178,8 @@ jobs:
       # Download specific wheels from URL via workflow dispatch
       - name: Download artifacts -> ${{ github.event.inputs.artifact_url }}
         if: github.event.inputs.artifact_url
+        env:
+          NRN_BUILD_CI_TOKEN: ${{ secrets.NRN_BUILD_CI_TOKEN }}
         working-directory: ${{github.workspace}}
         run: ./scripts/getArtifacts.sh '${{ github.event.inputs.artifact_url }}'
 
