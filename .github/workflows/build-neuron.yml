@@ -26,8 +26,8 @@ jobs:
   provide_version_matrix:
     runs-on: ubuntu-latest
     steps:
-    - name: check Azure drop URL exists -> ${{ github.event.inputs.azure_drop_url }}
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.azure_drop_url && startsWith(github.event.inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
+    - name: check Azure drop URL exists -> ${{ github.event.inputs.artifact_url }}
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url && startsWith(github.event.inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
       run: |
         curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
     - name: check artifact URL exists -> ${{ github.event.inputs.artifact_url }}
