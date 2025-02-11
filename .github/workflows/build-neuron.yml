@@ -29,7 +29,7 @@ jobs:
     - name: check Azure drop URL exists -> ${{ github.event.inputs.artifact_url }}
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url && startsWith(github.event.inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
       run: |
-        curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
+        curl -sfSI -X GET '${{ github.event.inputs.artifact_url }}'
     - name: check artifact URL exists -> ${{ github.event.inputs.artifact_url }}
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_url && startsWith(github.event.inputs.artifact_url, 'https://github.com/neuronsimulator/')
       run: |
