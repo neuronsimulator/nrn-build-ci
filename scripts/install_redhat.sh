@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 # Use DNF if available (not CentOS7), otherwise YUM
 CMD=$(command -v dnf || command -v yum)
 
