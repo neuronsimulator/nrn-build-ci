@@ -81,11 +81,12 @@ jobs:
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
       OS_FLAVOUR: ${{matrix.os.flavour}}
+      # the minimum version of Python that NEURON supports
+      MIN_PYTHON_MAJOR_VERSION: 3
+      MIN_PYTHON_MINOR_VERSION: 9
       # version of Python we will build NEURON with on MacOS
       MACOSX_PY_VERSION: 3.12
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
-      # Extra software collections to be installed and enabled on CentOS7
-      SOFTWARE_COLLECTIONS_centos_7: devtoolset-9 rh-git218 rh-python38
 
     strategy:
       matrix:
