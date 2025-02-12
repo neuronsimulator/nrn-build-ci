@@ -9,7 +9,7 @@ export DEBIAN_FRONTEND=noninteractive
 # ---
 apt-get update
 apt-get install -y bison cmake flex git libncurses-dev libmpich-dev libssl-dev \
-  libx11-dev libxcomposite-dev ninja-build mpich libreadline-dev sudo wget unzip
+  libx11-dev libxcomposite-dev ninja-build mpich libreadline-dev sudo wget unzip curl
 if [[ "${DO_NOT_INSTALL_BOOST}" != "true" ]]; then
   apt-get install -y libboost-all-dev
 fi
