@@ -24,6 +24,6 @@ then
       "https://api.github.com/repos/neuronsimulator/nrn/actions/artifacts/${ARTIFACT_ID}/zip" -o drop.zip
     unzip -d drop drop.zip
 else
-    wget --tries=4 -LO drop.zip "${ARTIFACT_DROP_URL}"
+    wget --tries=4 -O drop.zip "${ARTIFACT_DROP_URL}"
     unzip drop.zip
 fi
