@@ -25,14 +25,19 @@ export PYTHON=$(command -v python)
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
 
 # Install extra dependencies for NEURON into the virtual environment.
-pip install --upgrade -r nrn_requirements.txt
-if [[ -f ci_requirements.txt ]]; then
-  pip install --upgrade -r ci_requirements.txt
+if [[ -f ci/requirements.txt ]]; then
+    pip install -r ci/uv_requirements.txt
+    uv install -r ci/requirements.txt --cache-dir ${PYTHON_CACHE_DIR}
 else
-  pip install --upgrade plotly "ipywidgets>=7.0.0"
-fi
-if [[ -f external/nmodl/requirements.txt ]]; then
-  pip install --upgrade -r external/nmodl/requirements.txt
+    pip install --upgrade -r nrn_requirements.txt
+    if [[ -f ci_requirements.txt ]]; then
+      pip install --upgrade -r ci_requirements.txt
+    else
+      pip install --upgrade plotly "ipywidgets>=7.0.0"
+    fi
+    if [[ -f external/nmodl/requirements.txt ]]; then
+      pip install --upgrade -r external/nmodl/requirements.txt
+    fi
 fi
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
@@ -72,12 +77,10 @@ echo "------- Build NEURON -------"
 if [ "${OS_FLAVOUR}" == "macOS" ]; then
   PARALLEL_JOBS=3
 else
-  PARALLEL_JOBS=2
+  PARALLEL_JOBS=4
 fi
-cmake --build . --parallel ${PARALLEL_JOBS}
-
-echo "------- Install NEURON -------"
-cmake --build . -- install
+echo "------- Build and install NEURON -------"
+cmake --build . --parallel ${PARALLEL_JOBS} --target install
 
 echo "------- Run test suite -------"
 ctest -VV -j ${PARALLEL_JOBS}

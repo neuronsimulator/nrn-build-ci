@@ -76,6 +76,7 @@ jobs:
       # max minor supported version of Python
       MAX_MINOR_PYTHON_VERSION: '12'
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
+      PYTHON_CACHE_DIR: ${{github.workspace}}/pip_cache
 
     strategy:
       matrix:
@@ -158,13 +159,28 @@ jobs:
         run: |
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
-    
+
+       - name: Restore Python@${{ env.PY_MAX_VERSION }} dependencies
+        id: cache-python-packages-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/pip_cache
+          key: cache-${{ matrix.os }}-${{ hashFiles('ci/requirements.txt') }}
+
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
+
+      - name: Save Python dependencies
+        id: cache-python-packages-save
+        if: always() && steps.cache-python-packages-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.cache-python-packages-restore.outputs.cache-primary-key }}
+          path: ${{ github.workspace }}/pip_cache
 
       # Download specific wheels from Azure via workflow dispatch
       - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
