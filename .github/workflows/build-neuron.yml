@@ -160,12 +160,12 @@ jobs:
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
 
-      - name: Restore Python@${{ env.PY_MAX_VERSION }} dependencies
+      - name: Restore Python dependencies
         id: cache-python-packages-restore
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/pip_cache
-          key: cache-${{ matrix.os }}-${{ hashFiles('ci/requirements.txt') }}
+          key: cache-${{ matrix.os }}-${{ matrix.os.container }}-${{ hashFiles('ci/requirements.txt') }}
 
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
