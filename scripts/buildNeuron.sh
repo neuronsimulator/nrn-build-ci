@@ -83,4 +83,4 @@ echo "------- Build and install NEURON -------"
 cmake --build . --parallel ${PARALLEL_JOBS} --target install
 
 echo "------- Run test suite -------"
-ctest -VV -j ${PARALLEL_JOBS}
+ctest --output-on-failure -j ${PARALLEL_JOBS}
