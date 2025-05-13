@@ -27,7 +27,7 @@ export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackag
 # Install extra dependencies for NEURON into the virtual environment.
 if [[ -f ci/requirements.txt ]]; then
     pip install -r ci/uv_requirements.txt
-    uv install -r ci/requirements.txt --cache-dir ${PYTHON_CACHE_DIR}
+    uv pip install -r ci/requirements.txt --cache-dir ${PYTHON_CACHE_DIR}
 else
     pip install --upgrade -r nrn_requirements.txt
     if [[ -f ci_requirements.txt ]]; then
