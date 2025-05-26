@@ -80,22 +80,8 @@ jobs:
     strategy:
       matrix:
         os:
-        # GitHub Actions MacOS 13 runner
-        - { vm: macos-13, flavour: macOS }
-        # Alma Linux 8 Docker image
-        - { vm: ubuntu-latest, container: "almalinux:8.10", flavour: redhat }
-        # CentOS Stream 9 Docker image
-        - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream9", flavour: redhat }
         # Fedora 37 Docker image
         - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
-        # Fedora 40 Docker image
-        - { vm: ubuntu-latest, container: "fedora:40", flavour: redhat }
-        # Ubuntu 20.04 Docker image
-        - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
-        # Ubuntu Latest (24.04, at time of writing) Docker image
-        - { vm: ubuntu-latest, container: "ubuntu:latest", flavour: debian }
-        # Debian Bullseye (11) Docker image
-        - { vm: ubuntu-latest, container: "debian:bullseye", flavour: debian }
         # At the time of writing, Debian Bookworm (12) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
