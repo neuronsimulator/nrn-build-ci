@@ -31,34 +31,12 @@ jobs:
       run: |
         curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
 
-    - name: Construct matrix of branch/tag names and wheel versions to test
-      id: provide_versions
-      run: |
-        if [[ '${{github.event.inputs.neuron_branch}}' == "" ]]
-        then
-          # If we're not told to test a specific branch, test the default branch with neuron-nightly wheels
-          values="{\"branch_or_tag\": \"\", \"default_wheel\": \"neuron-nightly\"}"
-          if [[ $(date +%u) == 1 ]] || [[ ${{ github.event_name }} == 'pull_request' ]] || [[ ${{ github.event_name }} == 'push' ]]
-          then
-            # If it's a Monday, test the latest release (and latest released wheels) in addition
-            # Also test it on any PR, and any push to a PR
-            tag_name="${{steps.get_latest_release.outputs.tag_name}}"
-            values="${values}, {\"branch_or_tag\": \"${tag_name}\", \"default_wheel\": \"neuron==${tag_name}\"}"
-          fi
-          echo "matrix=[${values}]" >> $GITHUB_OUTPUT
-        else
-          # Test the given branch with no wheels by default. If an Azure URL is given, those wheels will be used.
-          echo "matrix=[{\"branch_or_tag\": \"${{github.event.inputs.neuron_branch}}\", \"default_wheel\": \"\"}]" >> $GITHUB_OUTPUT
-        fi
-    outputs:
-      matrix: ${{ steps.provide_versions.outputs.matrix }}
-
   ci:
     timeout-minutes: 45
     needs: provide_version_matrix
     runs-on: ${{ matrix.os.vm }}
     container: ${{ matrix.os.container }}
-    name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}} ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
+    name: ${{matrix.os.container || matrix.os.vm}}
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
       OS_FLAVOUR: ${{matrix.os.flavour}}
@@ -75,7 +53,6 @@ jobs:
         - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
         # At the time of writing, Debian Bookworm (12) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
-        branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
       fail-fast: false
       
     steps:
