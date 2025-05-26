@@ -30,16 +30,7 @@ jobs:
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.azure_drop_url
       run: |
         curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
-    - name: Get latest release information
-      id: get_latest_release
-      uses: joutvhu/get-release@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        debug: true
-        latest: true
-        prerelease: true
-        repo: "nrn"
+
     - name: Construct matrix of branch/tag names and wheel versions to test
       id: provide_versions
       run: |
