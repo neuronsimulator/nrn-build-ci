@@ -25,4 +25,4 @@ export PYTHON=$(command -v python)
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
 
 # Install extra dependencies for NEURON into the virtual environment.
-pip install --upgrade -r nrn_requirements.txt
+pip install 'mpi4py==4.0.3'

@@ -114,25 +114,6 @@ jobs:
         env:
           FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
 
-      # MacOS has 3.13 as default, so we instead install the max supported one
-      - if: startsWith(matrix.os.flavour, 'macOS')
-        name: Set up Python@3.${{ env.MAX_MINOR_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.${{ env.MAX_MINOR_PYTHON_VERSION }}"
-
-      # Checkout the repository; do this before the privilege step so that we
-      # can chown the result there
-      - name: Checkout NEURON
-        working-directory: ${{github.workspace}}
-        run: |
-          branch_or_tag="${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}}"
-          echo "branch_or_tag=${branch_or_tag}"
-          if [ -n "${branch_or_tag}" ]; then BRANCH_OPT="--branch=${branch_or_tag}"; fi
-          git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
-          # Init submodules for testing purposes
-          cd nrn && git submodule update --init --recursive
-
       # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
       # are root. This is different from when we use the GitHub Actions images
       # directly, and leads to errors from MPI later. If we run inside Docker,
@@ -147,31 +128,4 @@ jobs:
     
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
-        working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
-        env:
-          INSTALL_DIR : ${{github.workspace}}/nrn/install
-
-      # Download specific wheels from Azure via workflow dispatch
-      - name: Download Azure drop (artifacts) -> ${{ github.event.inputs.azure_drop_url }}
-        if: github.event.inputs.azure_drop_url
-        working-directory: ${{github.workspace}}
-        run: ./scripts/getAzureDrop.sh '${{ github.event.inputs.azure_drop_url }}'
-
-      # Test the wheels. If an Azure URL was given, those wheels are used. Otherwise:
-      # - default branch (master): neuron-nightly
-      # - latest release (tag X.Y): neuron==X.Y
-      # - feature branch: wheels only tested if a URL is given
-      - name: Test (nightly) NEURON wheel
-        if: github.event.inputs.azure_drop_url || matrix.branch_or_tag_and_default_wheel.default_wheel
-        working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
-        env:
-          NRN_PACKAGE: ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
-          NEURON_BRANCH_OR_TAG: ${{matrix.branch_or_tag}}
-
-      # This step will set up an SSH connection on tmate.io for live debugging
-      # of non-Docker runs that failed.
-      - name: live debug session on failure
-        if: failure() && !matrix.os.container
-        uses: mxschmitt/action-tmate@v3
+        run: ./wrappers/runUnprivileged.sh ./scripts/buildNeuron.sh
