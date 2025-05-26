@@ -5,35 +5,14 @@ on:
     branches:
       - main
   pull_request:
-  schedule:
-    # Run at 2am every day
-    - cron:  '0 2 * * *'
-  workflow_dispatch:
-    inputs:
-      azure_drop_url:
-        description: 'Azure drop (artifacts) url'
-      neuron_branch:
-        description: 'NEURON branch to test'
-        default: ''
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  # This allows us to dynamically vary the number of branches we run on on
-  # different days.
-  provide_version_matrix:
-    runs-on: ubuntu-latest
-    steps:
-    - name: check Azure drop url exists -> ${{ github.event.inputs.azure_drop_url }}
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.azure_drop_url
-      run: |
-        curl -sfSI -X GET '${{ github.event.inputs.azure_drop_url }}'
-
   ci:
     timeout-minutes: 45
-    needs: provide_version_matrix
     runs-on: ${{ matrix.os.vm }}
     container: ${{ matrix.os.container }}
     name: ${{matrix.os.container || matrix.os.vm}}
