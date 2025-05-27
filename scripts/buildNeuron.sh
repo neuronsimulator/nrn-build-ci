@@ -23,6 +23,6 @@ export PYTHON=$(command -v python)
 
 # nrniv -python does not copy properly with virtualenvs
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
-
+export CFLAGS='-O0'
 # Install extra dependencies for NEURON into the virtual environment.
 pip install 'mpi4py==4.0.3'
