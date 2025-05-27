@@ -89,7 +89,7 @@ jobs:
         # Fedora 37 Docker image
         - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
         # Fedora 40 Docker image
-        - { vm: ubuntu-latest, container: "fedora:42", flavour: redhat }
+        - { vm: ubuntu-latest, container: "fedora:40", flavour: redhat }
         # Ubuntu 20.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
         # Ubuntu Latest (24.04, at time of writing) Docker image
