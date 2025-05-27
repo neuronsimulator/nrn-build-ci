@@ -24,6 +24,7 @@ jobs:
       # max minor supported version of Python
       MAX_MINOR_PYTHON_VERSION: '12'
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
+      CFLAGS: '-O0'
 
     strategy:
       matrix:
