@@ -74,7 +74,7 @@ jobs:
       # min minor supported version of Python
       MIN_MINOR_PYTHON_VERSION: '9'
       # max minor supported version of Python
-      MAX_MINOR_PYTHON_VERSION: '12'
+      MAX_MINOR_PYTHON_VERSION: '13'
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
 
     strategy:
