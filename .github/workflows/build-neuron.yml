@@ -76,4 +76,6 @@ jobs:
     
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
-        run: ./wrappers/runUnprivileged.sh ./scripts/buildNeuron.sh
+        run: |
+          export CFLAGS='-O0'
+          ./wrappers/runUnprivileged.sh ./scripts/buildNeuron.sh
