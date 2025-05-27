@@ -25,6 +25,11 @@ export PYTHON=$(command -v python)
 export PYTHONPATH=$(${PYTHON} -c 'import site; print(":".join(site.getsitepackages()))')
 
 # Install extra dependencies for NEURON into the virtual environment.
+# Apply workaround for mpi4py OOM issue on Fedora 37 and Debian 12
+if [[ -n "${CFLAGS:-}" ]]; then
+    old_CFLAGS="${CFLAGS}"
+fi
+export CFLAGS='-O0'
 pip install --upgrade -r nrn_requirements.txt
 if [[ -f ci_requirements.txt ]]; then
   pip install --upgrade -r ci_requirements.txt
@@ -33,6 +38,9 @@ else
 fi
 if [[ -f external/nmodl/requirements.txt ]]; then
   pip install --upgrade -r external/nmodl/requirements.txt
+fi
+if [[ -n "${old_CFLAGS:-}" ]]; then
+    export CFLAGS="${old_CFLAGS}"
 fi
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
