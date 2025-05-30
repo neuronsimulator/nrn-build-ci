@@ -20,7 +20,7 @@ defaults:
     shell: bash
 
 env:
-  CCACHE_DIR: /ccache
+  CCACHE_DIR: ${{ github.workspace }}/ccache
 
 jobs:
   # This allows us to dynamically vary the number of branches we run on on
