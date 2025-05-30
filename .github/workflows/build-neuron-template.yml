@@ -107,7 +107,7 @@ jobs:
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
       fail-fast: false
-      
+
     steps:
       # Checkout the dedicated repository that steers the CI build
       - uses: actions/checkout@v4
@@ -176,7 +176,7 @@ jobs:
         run: |
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
-    
+
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
