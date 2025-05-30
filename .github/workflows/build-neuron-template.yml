@@ -20,7 +20,7 @@ defaults:
     shell: bash
 
 env:
-  CCACHE_DIR: /ccache
+  CCACHE_DIR: ${{ github.workspace }}/ccache
 
 jobs:
   # This allows us to dynamically vary the number of branches we run on on
@@ -143,10 +143,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.${{ env.MAX_MINOR_PYTHON_VERSION }}"
-
-      - name: Install ccache
-        run: |
-          ./scripts/install_ccache.sh
 
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
