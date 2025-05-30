@@ -1,7 +1,7 @@
 name: Neuron CI template
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       azure_drop_url:
         description: 'Azure drop (artifacts) url'
