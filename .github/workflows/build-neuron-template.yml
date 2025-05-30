@@ -1,0 +1,190 @@
+name: Neuron CI template
+
+on:
+  workflow_dispatch:
+    inputs:
+      azure_drop_url:
+        description: 'Azure drop (artifacts) url'
+      neuron_branch:
+        description: 'NEURON branch to test'
+        default: ''
+      repo:
+        default: 'neuronsimulator/nrn-build-ci'
+        type: string
+        required: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # This allows us to dynamically vary the number of branches we run on on
+  # different days.
+  provide_version_matrix:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check Azure drop url exists -> ${{ inputs.azure_drop_url }}
+      if: inputs.azure_drop_url
+      run: |
+        curl -sfSI -X GET '${{ inputs.azure_drop_url }}'
+    - name: Get latest release information
+      id: get_latest_release
+      uses: joutvhu/get-release@v1
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      with:
+        debug: true
+        latest: true
+        prerelease: true
+        repo: "nrn"
+    - name: Construct matrix of branch/tag names and wheel versions to test
+      id: provide_versions
+      run: |
+        if [[ '${{inputs.neuron_branch}}' == "" ]]
+        then
+          # If we're not told to test a specific branch, test the default branch with neuron-nightly wheels
+          values="{\"branch_or_tag\": \"\", \"default_wheel\": \"neuron-nightly\"}"
+          if [[ $(date +%u) == 1 ]] || [[ ${{ github.event_name }} == 'pull_request' ]] || [[ ${{ github.event_name }} == 'push' ]]
+          then
+            # If it's a Monday, test the latest release (and latest released wheels) in addition
+            # Also test it on any PR, and any push to a PR
+            tag_name="${{steps.get_latest_release.outputs.tag_name}}"
+            values="${values}, {\"branch_or_tag\": \"${tag_name}\", \"default_wheel\": \"neuron==${tag_name}\"}"
+          fi
+          echo "matrix=[${values}]" >> $GITHUB_OUTPUT
+        else
+          # Test the given branch with no wheels by default. If an Azure URL is given, those wheels will be used.
+          echo "matrix=[{\"branch_or_tag\": \"${{inputs.neuron_branch}}\", \"default_wheel\": \"\"}]" >> $GITHUB_OUTPUT
+        fi
+    outputs:
+      matrix: ${{ steps.provide_versions.outputs.matrix }}
+
+  ci:
+    timeout-minutes: 45
+    needs: provide_version_matrix
+    runs-on: ${{ matrix.os.vm }}
+    container: ${{ matrix.os.container }}
+    name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}} ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
+    env:
+      SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
+      OS_FLAVOUR: ${{matrix.os.flavour}}
+      # min minor supported version of Python
+      MIN_MINOR_PYTHON_VERSION: '9'
+      # max minor supported version of Python
+      MAX_MINOR_PYTHON_VERSION: '13'
+      UNPRIVILEGED_USER: runner # User created+used inside Docker containers
+
+    strategy:
+      matrix:
+        os:
+        # GitHub Actions MacOS 13 runner
+        - { vm: macos-13, flavour: macOS }
+        # Alma Linux 8 Docker image
+        - { vm: ubuntu-latest, container: "almalinux:8.10", flavour: redhat }
+        # CentOS Stream 9 Docker image
+        - { vm: ubuntu-latest, container: "quay.io/centos/centos:stream9", flavour: redhat }
+        # Fedora 37 Docker image
+        - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
+        # Fedora 40 Docker image
+        - { vm: ubuntu-latest, container: "fedora:40", flavour: redhat }
+        # Ubuntu 20.04 Docker image
+        - { vm: ubuntu-latest, container: "ubuntu:20.04", flavour: debian }
+        # Ubuntu Latest (24.04, at time of writing) Docker image
+        - { vm: ubuntu-latest, container: "ubuntu:latest", flavour: debian }
+        # Debian Bullseye (11) Docker image
+        - { vm: ubuntu-latest, container: "debian:bullseye", flavour: debian }
+        # At the time of writing, Debian Bookworm (12) Docker image
+        - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
+        branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
+      fail-fast: false
+      
+    steps:
+      # Checkout the dedicated repository that steers the CI build
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.repo || github.repository }}
+
+      # Install required packages using the system package manager. This
+      # includes installing or updating the git client to a sufficiently
+      # new version that the checkout of the main nrn repository does *not*
+      # fall back to using the REST API, which clobbers submodule information
+      # and breaks the build.
+      - name: Install ${{matrix.os.flavour}} packages
+        run: |
+          OS_CONTAINER="${{matrix.os.container}}"
+          # only the part after the last slash
+          OS_CONTAINER="${OS_CONTAINER##*/}"
+          # replace : and . with _
+          OS_CONTAINER="${OS_CONTAINER//[:.]/_}"
+          CONTAINER_SCRIPT="scripts/install_${{matrix.os.flavour}}_${OS_CONTAINER}.sh"
+          # pass this on to the next steps too, for convenience
+          echo "OS_CONTAINER=${OS_CONTAINER}" >> "${GITHUB_ENV}"
+          # (container+flavour)-specific script runs first because it must be
+          # able to enable repositories that make the flavour-specific script
+          # work.
+          if [ -f "${CONTAINER_SCRIPT}" ]; then source "${CONTAINER_SCRIPT}"; fi
+          if [ -f "${FLAVOUR_SCRIPT}" ]; then source "${FLAVOUR_SCRIPT}"; fi
+        env:
+          FLAVOUR_SCRIPT: scripts/install_${{matrix.os.flavour}}.sh
+
+      # MacOS has 3.13 as default, so we instead install the max supported one
+      - if: startsWith(matrix.os.flavour, 'macOS')
+        name: Set up Python@3.${{ env.MAX_MINOR_PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.${{ env.MAX_MINOR_PYTHON_VERSION }}"
+
+      # Checkout the repository; do this before the privilege step so that we
+      # can chown the result there
+      - name: Checkout NEURON
+        working-directory: ${{github.workspace}}
+        run: |
+          branch_or_tag="${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}}"
+          echo "branch_or_tag=${branch_or_tag}"
+          if [ -n "${branch_or_tag}" ]; then BRANCH_OPT="--branch=${branch_or_tag}"; fi
+          git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
+          # Init submodules for testing purposes
+          cd nrn && git submodule update --init --recursive --depth 1
+
+      # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
+      # are root. This is different from when we use the GitHub Actions images
+      # directly, and leads to errors from MPI later. If we run inside Docker,
+      # create a regular user to run as.
+      - name: Setup unprivileged user
+        # If we run in a native GitHub Actions container, without Docker, this
+        # isn't needed
+        if: matrix.os.container
+        run: |
+          useradd --create-home ${UNPRIVILEGED_USER}
+          chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
+    
+      # Put all the remaining steps in one job that runs as an unprivileged user
+      - name: Build and test NEURON
+        working-directory: ${{github.workspace}}/nrn
+        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+        env:
+          INSTALL_DIR : ${{github.workspace}}/nrn/install
+
+      # Download specific wheels from Azure via workflow dispatch
+      - name: Download Azure drop (artifacts) -> ${{ inputs.azure_drop_url }}
+        if: inputs.azure_drop_url
+        working-directory: ${{github.workspace}}
+        run: ./scripts/getAzureDrop.sh '${{ inputs.azure_drop_url }}'
+
+      # Test the wheels. If an Azure URL was given, those wheels are used. Otherwise:
+      # - default branch (master): neuron-nightly
+      # - latest release (tag X.Y): neuron==X.Y
+      # - feature branch: wheels only tested if a URL is given
+      - name: Test (nightly) NEURON wheel
+        if: inputs.azure_drop_url || matrix.branch_or_tag_and_default_wheel.default_wheel
+        working-directory: ${{github.workspace}}/nrn
+        run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
+        env:
+          NRN_PACKAGE: ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
+          NEURON_BRANCH_OR_TAG: ${{matrix.branch_or_tag}}
+
+      # This step will set up an SSH connection on tmate.io for live debugging
+      # of non-Docker runs that failed.
+      - name: live debug session on failure
+        if: failure() && !matrix.os.container
+        uses: mxschmitt/action-tmate@v3
