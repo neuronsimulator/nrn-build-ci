@@ -87,13 +87,12 @@ mkdir build && cd build
 cmake ${CMAKE_OPTION} ..
 
 echo "------- Build NEURON -------"
-# Autodetection does not seem to work well, compiler processes were getting killed.
 # These core counts are taken from
 # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-if [ "${OS_FLAVOUR}" == "macOS" ]; then
+if [ "$(uname -s)" = 'Darwin' ] && [ "$(uname -m)" = 'arm64' ]; then
   PARALLEL_JOBS=3
 else
-  PARALLEL_JOBS=2
+  PARALLEL_JOBS=4
 fi
 cmake --build . --parallel ${PARALLEL_JOBS}
 
