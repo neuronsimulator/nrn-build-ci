@@ -1,4 +1,4 @@
-name: Neuron CI template
+name: Neuron build CI template
 
 on:
   workflow_call:
@@ -23,6 +23,7 @@ jobs:
   # This allows us to dynamically vary the number of branches we run on on
   # different days.
   provide_version_matrix:
+    name: 'Create matrix of platforms for which to build NEURON'
     runs-on: ubuntu-latest
     steps:
     - name: check Azure drop url exists -> ${{ inputs.azure_drop_url }}

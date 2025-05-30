@@ -22,6 +22,7 @@ defaults:
 
 jobs:
   run-reusable:
+    name: Run build CI
     uses: ./.github/workflows/build-neuron-template.yml
     with:
       neuron_branch: ${{ github.event.inputs.neuron_branch }}
