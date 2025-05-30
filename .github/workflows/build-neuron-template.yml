@@ -184,7 +184,11 @@ jobs:
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+        run: |
+          ccache -z
+          ccache -svv
+          ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+          ccache -svv
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
 
