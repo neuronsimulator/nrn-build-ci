@@ -19,6 +19,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  CCACHE_DIR: /ccache
+
 jobs:
   # This allows us to dynamically vary the number of branches we run on on
   # different days.
@@ -66,7 +69,11 @@ jobs:
     timeout-minutes: 45
     needs: provide_version_matrix
     runs-on: ${{ matrix.os.vm }}
-    container: ${{ matrix.os.container }}
+    container:
+      image: ${{ matrix.os.container }}
+      volumes:
+        # some jobs use containers, so the cache must be mounted separately
+        - ccache:/ccache
     name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}} ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
@@ -149,6 +156,15 @@ jobs:
           # Init submodules for testing purposes
           cd nrn && git submodule update --init --recursive --depth 1
 
+      - name: Restore compiler cache
+        id: restore-compiler-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: /ccache
+          key: ccache-coverage-${{runner.os}}-${{github.ref_name}}
+          restore-keys: |
+            ccache-build-ci-${{runner.os}}-main
+
       # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
       # are root. This is different from when we use the GitHub Actions images
       # directly, and leads to errors from MPI later. If we run inside Docker,
@@ -185,6 +201,14 @@ jobs:
         env:
           NRN_PACKAGE: ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
           NEURON_BRANCH_OR_TAG: ${{matrix.branch_or_tag}}
+
+      - name: Save compiler cache
+        id: save-compiler-cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.restore-compiler-cache.outputs.cache-primary-key }}
+          path: /ccache
 
       # This step will set up an SSH connection on tmate.io for live debugging
       # of non-Docker runs that failed.
