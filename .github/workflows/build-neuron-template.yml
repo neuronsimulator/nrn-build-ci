@@ -164,8 +164,8 @@ jobs:
         id: restore-compiler-cache
         uses: actions/cache/restore@v4
         with:
-          path: /ccache
-          key: ccache-coverage-${{runner.os}}-${{github.ref_name}}
+          path: ${{ github.workspace }}/ccache
+          key: ccache-${{matrix.os.vm}}-${{matrix.os.container || 'containerless'}}-${{github.ref_name}}
           restore-keys: |
             ccache-build-ci-${{runner.os}}-main
 
@@ -212,7 +212,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           key: ${{ steps.restore-compiler-cache.outputs.cache-primary-key }}
-          path: /ccache
+          path: ${{ github.workspace }}/ccache
 
       # This step will set up an SSH connection on tmate.io for live debugging
       # of non-Docker runs that failed.
