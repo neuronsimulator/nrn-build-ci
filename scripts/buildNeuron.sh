@@ -45,19 +45,6 @@ fi
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
 
-install_ccache() {
-    ccache_version='4.11.3'
-    ccache_srcdir="ccache-${ccache_version}"
-    ccache_builddir="ccache-build"
-    wget "https://github.com/ccache/ccache/releases/download/v${ccache_version}/ccache-${ccache_version}.tar.gz"
-    tar xf "ccache-${ccache_version}.tar.gz"
-    cmake -B "${ccache_builddir}" -S "${ccache_srcdir}"
-    cmake --build "${ccache_builddir}" --parallel
-    sudo cmake --install "${ccache_builddir}"
-}
-
-install_ccache
-
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}

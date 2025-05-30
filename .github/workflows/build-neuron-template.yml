@@ -144,6 +144,10 @@ jobs:
         with:
           python-version: "3.${{ env.MAX_MINOR_PYTHON_VERSION }}"
 
+      - name: Install ccache
+        run: |
+          ./scripts/install_ccache.sh
+
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
       - name: Checkout NEURON
