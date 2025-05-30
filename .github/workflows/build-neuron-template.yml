@@ -5,8 +5,10 @@ on:
     inputs:
       azure_drop_url:
         description: 'Azure drop (artifacts) url'
+        type: string
       neuron_branch:
         description: 'NEURON branch to test'
+        type: string
         default: ''
       repo:
         default: 'neuronsimulator/nrn-build-ci'
