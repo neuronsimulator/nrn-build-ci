@@ -24,6 +24,7 @@ echo "Wrapper script generated command prefix: ${CMD_PREFIX}"
 QUOTED_ARGS=$(printf " %q" "$@")
 ${CMD_PREFIX} sh -c "INSTALL_DIR=${INSTALL_DIR}\
  NEURON_BRANCH_OR_TAG=${NEURON_BRANCH_OR_TAG} NRN_PYTHON=${NRN_PYTHON} \
+ CCACHE_DIR=${CCACHE_DIR} \
  OS_FLAVOUR=${OS_FLAVOUR} OS_CONTAINER=${OS_CONTAINER} \
  NRN_PACKAGE=${NRN_PACKAGE} bash --noprofile --norc -e -o pipefail \
  --${QUOTED_ARGS}"
