@@ -56,6 +56,8 @@ install_ccache() {
     sudo cmake --install "${ccache_builddir}"
 }
 
+install_ccache
+
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}
