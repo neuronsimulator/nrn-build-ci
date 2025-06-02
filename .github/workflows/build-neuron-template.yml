@@ -71,6 +71,9 @@ jobs:
     runs-on: ${{ matrix.os.vm }}
     container:
       image: ${{ matrix.os.container }}
+      volumes:
+        # some jobs use containers, so the cache must be mounted separately
+        - ${{ github.workspace}}/ccache:${{ github.workspace }}/ccache
     name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}} ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
