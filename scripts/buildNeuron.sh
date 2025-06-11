@@ -45,6 +45,10 @@ fi
 # Needed for installation of older NEURON versions with Python 12
 pip install --upgrade setuptools
 
+# workaround for:
+# https://github.com/neuronsimulator/nrn/issues/3488
+pip install "pytest<=8.1.1"
+
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}
