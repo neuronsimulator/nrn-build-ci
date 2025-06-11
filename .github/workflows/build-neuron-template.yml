@@ -195,11 +195,10 @@ jobs:
       # Download specific wheels from Azure or GHA URL
       - name: Download artifacts
         if: inputs.artifact_url
-        working-directory: ${{github.workspace}}
         uses: actions/download-artifact@v4
         with:
           name: drop
-          path: drop.zip
+          path: ${{github.workspace}}
 
       - name: Extract the GHA artifacts
         if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
