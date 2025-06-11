@@ -29,7 +29,7 @@ jobs:
     - name: check Azure drop URL exists -> ${{ inputs.artifact_url }}
       if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
       run: |
-        curl -sfSI -X GET '${{ inputs.artifact_url }}'
+        wget -O drop.zip '${{ inputs.artifact_url }}'
 
     - name: check GHA artifact URL exists -> ${{ inputs.artifact_url }}
       if: startsWith(inputs.artifact_url, 'https://github.com/neuronsimulator/')
@@ -181,12 +181,6 @@ jobs:
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
-
-      # Download specific wheels from Azure or GHA URL
-      - name: Download artifacts -> ${{ inputs.artifact_url }}
-        if: inputs.artifact_url
-        working-directory: ${{github.workspace}}
-        run: ./scripts/getArtifacts.sh '${{ inputs.artifact_url }}'
 
       # Test the wheels. If an Azure or GHA URL was given, those wheels are used. Otherwise:
       # - default branch (master): neuron-nightly
