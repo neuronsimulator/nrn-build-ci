@@ -43,6 +43,16 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           /repos/neuronsimulator/nrn/actions/artifacts/${ARTIFACT_ID}/zip > drop.zip
 
+    - name: Upload artifact
+      if: inputs.artifact_url
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop
+        path: drop.zip
+        # we have the GHA or Azure URL anyway, we just need to pass it to the
+        # other job
+        retention-days: 1
+
     - name: Get latest release information
       id: get_latest_release
       uses: joutvhu/get-release@v1
@@ -181,6 +191,28 @@ jobs:
         run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
+
+      # Download specific wheels from Azure or GHA URL
+      - name: Download artifacts
+        if: inputs.artifact_url
+        working-directory: ${{github.workspace}}
+        uses: actions/download-artifact@v4
+        with:
+          name: drop
+          path: drop.zip
+
+      - name: Extract the GHA artifacts
+        if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
+        working-directory: ${{github.workspace}}
+        run: |
+          unzip -d drop drop.zip
+
+      - name: Extract the Azure artifacts
+        if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
+        working-directory: ${{github.workspace}}
+        run: |
+          # Azure puts another `drop` directory on top
+          unzip drop.zip
 
       # Test the wheels. If an Azure or GHA URL was given, those wheels are used. Otherwise:
       # - default branch (master): neuron-nightly
