@@ -15,7 +15,7 @@ if [[ -d "${DROP_DIR}" ]]; then
   . wheel_test_venv/bin/activate
   export PYTHON=$(command -v python)
   # install wheel from artifact
-  pip install --find-links ${DROP_DIR} neuron-nightly
+  pip install --no-index --find-links ${DROP_DIR} neuron-nightly
   # get version of NEURON to avoid downloading something else in the venv for test_wheels.sh
   NRN_PACKAGE="neuron-nightly==$(pip show neuron-nightly | grep Version | cut -d ' ' -f2 )"
   USE_VENV="false"
