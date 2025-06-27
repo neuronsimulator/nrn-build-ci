@@ -14,12 +14,14 @@ if [[ -d "${DROP_DIR}" ]]; then
   ${PYTHON} -m venv wheel_test_venv
   . wheel_test_venv/bin/activate
   export PYTHON=$(command -v python)
+  # upgrade pip (to latest known that works)
+  "${PYTHON}" -m pip install --upgrade 'pip<=25.1.1'
   # install wheel from artifact
   # due to https://github.com/pypa/pip/issues/12110 we cannot rely on `--find-links`
   # so we use a workaround
   for wheel in "${DROP_DIR}"/*.whl
   do
-    if ! pip install "${wheel}"
+    if ! "${PYTHON}" -m pip install "${wheel}"
     then
       echo "Unable to install ${wheel} (incompatible platform?), trying another one"
     else
