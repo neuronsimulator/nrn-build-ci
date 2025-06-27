@@ -24,13 +24,15 @@ if [[ -d "${DROP_DIR}" ]]; then
       echo "Unable to install ${wheel} (incompatible platform?), trying another one"
     else
       echo "Successfully installed ${wheel}"
-      NRN_PACKAGE="${wheel}"
+      WHEEL_FOUND="${wheel}"
       break
     fi
   done
-  if [[ -z "${NRN_PACKAGE}" ]]; then
+  if [[ -z "${WHEEL_FOUND:-}" ]]; then
     echo "ERROR: NEURON wheel from ${DROP_DIR} could not be installed!"
     exit 1
+  else
+    NRN_PACKAGE="${WHEEL_FOUND}"
   fi
   USE_VENV="false"
 fi
