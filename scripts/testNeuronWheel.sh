@@ -10,6 +10,7 @@ USE_VENV="true"
 export PYTHON=${NRN_PYTHON:-$(command -v python3)}
 # If artifact is there, install the wheel
 if [[ -d "${DROP_DIR}" ]]; then
+  echo "Using wheel from ${DROP_DIR}"
   ${PYTHON} -m venv wheel_test_venv
   . wheel_test_venv/bin/activate
   export PYTHON=$(command -v python)

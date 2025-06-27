@@ -201,7 +201,7 @@ jobs:
           path: ${{github.workspace}}
 
       - name: Extract the GHA artifacts
-        if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
+        if: startsWith(inputs.artifact_url, 'https://github.com/neuronsimulator/')
         working-directory: ${{github.workspace}}
         run: |
           unzip -d drop drop.zip
