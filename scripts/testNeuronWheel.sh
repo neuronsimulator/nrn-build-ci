@@ -15,7 +15,18 @@ if [[ -d "${DROP_DIR}" ]]; then
   . wheel_test_venv/bin/activate
   export PYTHON=$(command -v python)
   # install wheel from artifact
-  pip install --no-index --find-links ${DROP_DIR} neuron-nightly
+  # due to https://github.com/pypa/pip/issues/12110 we cannot rely on `--find-links`
+  # so we use a workaround
+  for wheel in "${DROP_DIR}"/*.whl
+  do
+    if ! pip install "${wheel}"
+    then
+      echo "Unable to install ${wheel} (incompatible platform?), trying another one"
+    else
+      echo "Successfully installed ${wheel}"
+      break
+    fi
+  done
   # get version of NEURON to avoid downloading something else in the venv for test_wheels.sh
   NRN_PACKAGE="neuron-nightly==$(pip show neuron-nightly | grep Version | cut -d ' ' -f2 )"
   USE_VENV="false"
