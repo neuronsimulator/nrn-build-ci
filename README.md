@@ -73,7 +73,7 @@ Given a build (PR, master, ...) that generates wheel artifacts, it is possible t
 
 ## GitHub Actions
 
-As of version 9, wheels for NEURON are built exclusively using GitHub Actions. All of the jobs which build wheels are located at [this link](https://github.com/neuronsimulator/nrn/actions/workflows/wheels.yml). To access a particular artifact containing the wheels, proceed as follows:
+Since version 9, NEURON can build wheels for all platforms using GitHub Actions (see the [workflow](https://github.com/neuronsimulator/nrn/actions/workflows/wheels-nightly.yml)). To obtain an artifact:
 
 * click on a particular run:
 
@@ -83,10 +83,7 @@ As of version 9, wheels for NEURON are built exclusively using GitHub Actions. A
 
   ![](images/gha2.png)
 
-## Azure (deprecated)
-
-**NOTE**: for backwards compatibility, one can still use wheels built by Azure for testing, but this method is deprecated and will be removed in the future.
-As an alternative, please follow the instructions under "GitHub Actions" above.
+## Azure
 
 The Azure build publishes an artifact called `drop`, which contains all wheels built by the pipeline.
 
