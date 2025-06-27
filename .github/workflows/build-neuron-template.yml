@@ -185,12 +185,12 @@ jobs:
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
 
-      ## Put all the remaining steps in one job that runs as an unprivileged user
-      #- name: Build and test NEURON
-      #  working-directory: ${{github.workspace}}/nrn
-      #  run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
-      #  env:
-      #    INSTALL_DIR : ${{github.workspace}}/nrn/install
+      # Put all the remaining steps in one job that runs as an unprivileged user
+      - name: Build and test NEURON
+        working-directory: ${{github.workspace}}/nrn
+        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+        env:
+          INSTALL_DIR : ${{github.workspace}}/nrn/install
 
       # Download specific wheels from Azure or GHA URL
       - name: Download artifacts
