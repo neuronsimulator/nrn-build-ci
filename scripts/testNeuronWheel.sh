@@ -28,6 +28,10 @@ if [[ -d "${DROP_DIR}" ]]; then
       break
     fi
   done
+  if [[ -z "${NRN_PACKAGE}" ]]; then
+    echo "ERROR: NEURON wheel from ${DROP_DIR} could not be installed!"
+    exit 1
+  fi
   USE_VENV="false"
 fi
 # Run NEURON's wheel testing script
