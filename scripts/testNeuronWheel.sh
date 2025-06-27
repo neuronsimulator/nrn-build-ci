@@ -24,11 +24,10 @@ if [[ -d "${DROP_DIR}" ]]; then
       echo "Unable to install ${wheel} (incompatible platform?), trying another one"
     else
       echo "Successfully installed ${wheel}"
+      NRN_PACKAGE="${wheel}"
       break
     fi
   done
-  # get version of NEURON to avoid downloading something else in the venv for test_wheels.sh
-  NRN_PACKAGE="neuron-nightly==$(pip show neuron-nightly | grep Version | cut -d ' ' -f2 )"
   USE_VENV="false"
 fi
 # Run NEURON's wheel testing script
