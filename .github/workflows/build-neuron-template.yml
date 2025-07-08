@@ -3,8 +3,8 @@ name: Neuron build CI template
 on:
   workflow_call:
     inputs:
-      azure_drop_url:
-        description: 'Azure drop (artifacts) url'
+      artifact_url:
+        description: 'Artifact URL (from either Azure or GitHub Actions)'
         type: string
       neuron_branch:
         description: 'NEURON branch to test'
@@ -29,10 +29,33 @@ jobs:
     name: 'Create matrix of platforms for which to build NEURON'
     runs-on: ubuntu-latest
     steps:
-    - name: check Azure drop url exists -> ${{ inputs.azure_drop_url }}
-      if: inputs.azure_drop_url
+    - name: check Azure drop URL exists -> ${{ inputs.artifact_url }}
+      if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
       run: |
-        curl -sfSI -X GET '${{ inputs.azure_drop_url }}'
+        wget -O drop.zip '${{ inputs.artifact_url }}'
+
+    - name: check GHA artifact URL exists -> ${{ inputs.artifact_url }}
+      if: startsWith(inputs.artifact_url, 'https://github.com/neuronsimulator/')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        ARTIFACT_ID=$(echo "${{ inputs.artifact_url }}" | grep --color=never -oE '[0-9]+$')
+        echo "Extracted Artifact ID: ${ARTIFACT_ID}"
+        gh api \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/neuronsimulator/nrn/actions/artifacts/${ARTIFACT_ID}/zip > drop.zip
+
+    - name: Upload artifact
+      if: inputs.artifact_url
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop
+        path: drop.zip
+        # we have the GHA or Azure URL anyway, we just need to pass it to the
+        # other job
+        retention-days: 1
+
     - name: Get latest release information
       id: get_latest_release
       uses: joutvhu/get-release@v1
@@ -43,6 +66,7 @@ jobs:
         latest: true
         prerelease: true
         repo: "nrn"
+
     - name: Construct matrix of branch/tag names and wheel versions to test
       id: provide_versions
       run: |
@@ -192,18 +216,33 @@ jobs:
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
 
-      # Download specific wheels from Azure via workflow dispatch
-      - name: Download Azure drop (artifacts) -> ${{ inputs.azure_drop_url }}
-        if: inputs.azure_drop_url
-        working-directory: ${{github.workspace}}
-        run: ./scripts/getAzureDrop.sh '${{ inputs.azure_drop_url }}'
+      # Download specific wheels from Azure or GHA URL
+      - name: Download artifacts
+        if: inputs.artifact_url
+        uses: actions/download-artifact@v4
+        with:
+          name: drop
+          path: ${{github.workspace}}
 
-      # Test the wheels. If an Azure URL was given, those wheels are used. Otherwise:
+      - name: Extract the GHA artifacts
+        if: startsWith(inputs.artifact_url, 'https://github.com/neuronsimulator/')
+        working-directory: ${{github.workspace}}
+        run: |
+          unzip -d drop drop.zip
+
+      - name: Extract the Azure artifacts
+        if: startsWith(inputs.artifact_url, 'https://dev.azure.com/neuronsimulator/')
+        working-directory: ${{github.workspace}}
+        run: |
+          # Azure puts another `drop` directory on top
+          unzip drop.zip
+
+      # Test the wheels. If an Azure or GHA URL was given, those wheels are used. Otherwise:
       # - default branch (master): neuron-nightly
       # - latest release (tag X.Y): neuron==X.Y
       # - feature branch: wheels only tested if a URL is given
       - name: Test (nightly) NEURON wheel
-        if: inputs.azure_drop_url || matrix.branch_or_tag_and_default_wheel.default_wheel
+        if: inputs.artifact_url || matrix.branch_or_tag_and_default_wheel.default_wheel
         working-directory: ${{github.workspace}}/nrn
         run: ../wrappers/runUnprivileged.sh ../scripts/testNeuronWheel.sh
         env:
