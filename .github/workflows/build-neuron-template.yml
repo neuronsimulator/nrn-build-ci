@@ -97,7 +97,7 @@ jobs:
       image: ${{ matrix.os.container }}
       volumes:
         # some jobs use containers, so the cache must be mounted separately
-        - ccache:/ccache
+        - ${{ github.workspace}}/ccache:${{ github.workspace }}/ccache
     name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}} ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
@@ -189,9 +189,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{matrix.os.vm}}-${{matrix.os.container || 'containerless'}}-${{github.ref_name}}
+          key: ccache-${{matrix.os.vm}}-${{matrix.os.container || 'containerless'}}-${{github.ref_name}}-${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}}-${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
           restore-keys: |
-            ccache-build-ci-${{runner.os}}-main
+            ccache-${{matrix.os.vm}}-${{matrix.os.container || 'containerless'}}-main-${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}}-${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
 
       # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
       # are root. This is different from when we use the GitHub Actions images
