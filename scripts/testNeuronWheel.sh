@@ -8,15 +8,34 @@ source "${SCRIPT_DIR}/environment.sh"
 DROP_DIR="${SCRIPT_DIR}/../drop"
 USE_VENV="true"
 export PYTHON=${NRN_PYTHON:-$(command -v python3)}
-# If Azure drop is there, install the wheel
+# If artifact is there, install the wheel
 if [[ -d "${DROP_DIR}" ]]; then
+  echo "Using wheel from ${DROP_DIR}"
   ${PYTHON} -m venv wheel_test_venv
   . wheel_test_venv/bin/activate
   export PYTHON=$(command -v python)
-  # install wheel from drop
-  pip install --find-links ${DROP_DIR} neuron-nightly
-  # get Azure version to avoid downloading something else in the venv for test_wheels.sh
-  NRN_PACKAGE="neuron-nightly==$(pip show neuron-nightly | grep Version | cut -d ' ' -f2 )"
+  # upgrade pip (to latest known that works)
+  "${PYTHON}" -m pip install --upgrade 'pip<=25.1.1'
+  # install wheel from artifact
+  # due to https://github.com/pypa/pip/issues/12110 we cannot rely on `--find-links`
+  # so we use a workaround
+  for wheel in "${DROP_DIR}"/*.whl
+  do
+    if ! "${PYTHON}" -m pip install "${wheel}"
+    then
+      echo "Unable to install ${wheel} (incompatible platform?), trying another one"
+    else
+      echo "Successfully installed ${wheel}"
+      WHEEL_FOUND="${wheel}"
+      break
+    fi
+  done
+  if [[ -z "${WHEEL_FOUND:-}" ]]; then
+    echo "ERROR: NEURON wheel from ${DROP_DIR} could not be installed!"
+    exit 1
+  else
+    NRN_PACKAGE="${WHEEL_FOUND}"
+  fi
   USE_VENV="false"
 fi
 # Run NEURON's wheel testing script
