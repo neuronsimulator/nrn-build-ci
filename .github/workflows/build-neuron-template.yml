@@ -205,6 +205,15 @@ jobs:
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
 
+      - name: Fix ccache directory permissions
+        if: matrix.os.container
+        run: |
+          # Ensure ccache directory exists and has correct permissions
+          mkdir -p ${CCACHE_DIR}
+          chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${CCACHE_DIR}
+          # Also ensure the user can write to it
+          chmod -R 755 ${CCACHE_DIR}
+
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
