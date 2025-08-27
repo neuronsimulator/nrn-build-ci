@@ -70,19 +70,20 @@ export CMAKE_OPTION="-G Ninja \
  -DNRN_ENABLE_CORENEURON=ON -DPYTHON_EXECUTABLE=${PYTHON} \
  -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} \
  -DNRN_ENABLE_TESTS=ON -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
- -DCORENRN_ENABLE_OPENMP=${CORENRN_ENABLE_OPENMP:-ON}"
+ -DCORENRN_ENABLE_OPENMP=${CORENRN_ENABLE_OPENMP:-ON} \
+ -DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE:-ccache} \
+ -DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE:-ccache}"
 echo "CMake options: ${CMAKE_OPTION}"
 mkdir build && cd build
 cmake ${CMAKE_OPTION} ..
 
 echo "------- Build NEURON -------"
-# Autodetection does not seem to work well, compiler processes were getting killed.
 # These core counts are taken from
 # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-if [ "${OS_FLAVOUR}" == "macOS" ]; then
+if [ "$(uname -s)" = 'Darwin' ] && [ "$(uname -m)" = 'arm64' ]; then
   PARALLEL_JOBS=3
 else
-  PARALLEL_JOBS=2
+  PARALLEL_JOBS=4
 fi
 cmake --build . --parallel ${PARALLEL_JOBS}
 

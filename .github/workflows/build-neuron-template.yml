@@ -19,6 +19,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  CCACHE_DIR: ${{ github.workspace }}/ccache
+
 jobs:
   # This allows us to dynamically vary the number of branches we run on on
   # different days.
@@ -90,7 +93,11 @@ jobs:
     timeout-minutes: 45
     needs: provide_version_matrix
     runs-on: ${{ matrix.os.vm }}
-    container: ${{ matrix.os.container }}
+    container:
+      image: ${{ matrix.os.container }}
+      volumes:
+        # some jobs use containers, so the cache must be mounted separately
+        - ${{ github.workspace}}/ccache:${{ github.workspace }}/ccache
     name: ${{matrix.os.container || matrix.os.vm}} ${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}} ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
@@ -161,6 +168,10 @@ jobs:
         with:
           python-version: "3.${{ env.MAX_MINOR_PYTHON_VERSION }}"
 
+      - name: Install ccache
+        run: |
+          ./scripts/install_ccache.sh
+
       # Checkout the repository; do this before the privilege step so that we
       # can chown the result there
       - name: Checkout NEURON
@@ -172,6 +183,15 @@ jobs:
           git clone --depth=1 --single-branch ${BRANCH_OPT} ${{github.server_url}}/${{github.repository_owner}}/nrn
           # Init submodules for testing purposes
           cd nrn && git submodule update --init --recursive --depth 1
+
+      - name: Restore compiler cache
+        id: restore-compiler-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/ccache
+          key: ccache-${{matrix.os.vm}}-${{matrix.os.container || 'containerless'}}-${{github.ref_name}}-${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}}-${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
+          restore-keys: |
+            ccache-${{matrix.os.vm}}-${{matrix.os.container || 'containerless'}}-main-${{matrix.branch_or_tag_and_default_wheel.branch_or_tag}}-${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
 
       # When we run in Ubuntu/Fedora/Debian containers from Docker Hub then we
       # are root. This is different from when we use the GitHub Actions images
@@ -185,10 +205,23 @@ jobs:
           useradd --create-home ${UNPRIVILEGED_USER}
           chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${GITHUB_WORKSPACE}
 
+      - name: Fix ccache directory permissions
+        if: matrix.os.container
+        run: |
+          # Ensure ccache directory exists and has correct permissions
+          mkdir -p ${CCACHE_DIR}
+          chown -R ${UNPRIVILEGED_USER}:${UNPRIVILEGED_USER} ${CCACHE_DIR}
+          # Also ensure the user can write to it
+          chmod -R 755 ${CCACHE_DIR}
+
       # Put all the remaining steps in one job that runs as an unprivileged user
       - name: Build and test NEURON
         working-directory: ${{github.workspace}}/nrn
-        run: ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+        run: |
+          ccache -z
+          ccache -svv
+          ../wrappers/runUnprivileged.sh ../scripts/buildNeuron.sh
+          ccache -svv
         env:
           INSTALL_DIR : ${{github.workspace}}/nrn/install
 
@@ -224,6 +257,14 @@ jobs:
         env:
           NRN_PACKAGE: ${{matrix.branch_or_tag_and_default_wheel.default_wheel}}
           NEURON_BRANCH_OR_TAG: ${{matrix.branch_or_tag}}
+
+      - name: Save compiler cache
+        id: save-compiler-cache
+        if: always() && steps.restore-compiler-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.restore-compiler-cache.outputs.cache-primary-key }}
+          path: ${{ github.workspace }}/ccache
 
       # This step will set up an SSH connection on tmate.io for live debugging
       # of non-Docker runs that failed.
