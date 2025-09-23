@@ -6,8 +6,7 @@ The default branch of NEURON (and `neuron-nightly` wheel) is tested every night,
 and the latest tagged release (and corresponding `neuron` wheel) is tested once
 a week.
 At present, Ubuntu 22.04, Ubuntu 24.04, Fedora 37, Fedora 40, CentOS Stream
-9, Alma Linux 8, Debian Bullseye (11), Debian Bookworm (12), macOS 12 and
-macOS 13 are tested.
+9, Alma Linux 8, Debian Bullseye (11), Debian Bookworm (12), and macOS 14 are tested.
 
 The tested distributions are generally configured with the explicit
 name/version of the second-newest version of the distribution at the time,
