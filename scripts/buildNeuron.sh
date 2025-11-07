@@ -14,9 +14,8 @@ export PYTHON=${NRN_PYTHON:-$(command -v python3)}
 ${PYTHON} -m venv nrn_venv
 . nrn_venv/bin/activate
 
-# Make sure we have a modern pip, old ones may not handle dependency versions
-# correctly
-pip install --upgrade pip
+# Make sure we have uv
+pip install 'uv<=0.7.3'
 
 # Use the virtual environment python instead of the system one it redirects to
 export PYTHON=$(command -v python)
@@ -30,24 +29,27 @@ if [[ -n "${CFLAGS:-}" ]]; then
     old_CFLAGS="${CFLAGS}"
 fi
 export CFLAGS='-O0'
-pip install --upgrade -r nrn_requirements.txt
+uv pip install --upgrade -r nrn_requirements.txt
 if [[ -f ci_requirements.txt ]]; then
-  pip install --upgrade -r ci_requirements.txt
+  uv pip install --upgrade -r ci_requirements.txt
 else
-  pip install --upgrade plotly "ipywidgets>=7.0.0"
+  uv pip install --upgrade plotly "ipywidgets>=7.0.0"
 fi
 if [[ -f external/nmodl/requirements.txt ]]; then
-  pip install --upgrade -r external/nmodl/requirements.txt
+  uv pip install --upgrade -r external/nmodl/requirements.txt
+fi
+if [[ -f ci/requirements.txt ]]; then
+    uv pip install -r ci/requirements.txt
 fi
 if [[ -n "${old_CFLAGS:-}" ]]; then
     export CFLAGS="${old_CFLAGS}"
 fi
 # Needed for installation of older NEURON versions with Python 12
-pip install --upgrade setuptools
+uv pip install --upgrade setuptools
 
 # workaround for:
 # https://github.com/neuronsimulator/nrn/issues/3488
-pip install "pytest<=8.1.1"
+uv pip install "pytest<=8.1.1"
 
 # Set default compilers, but don't override preset values
 export CC=${CC:-gcc}
