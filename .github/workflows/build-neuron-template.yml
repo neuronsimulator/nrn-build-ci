@@ -87,7 +87,7 @@ jobs:
       matrix: ${{ steps.provide_versions.outputs.matrix }}
 
   ci:
-    timeout-minutes: 45
+    timeout-minutes: 60
     needs: provide_version_matrix
     runs-on: ${{ matrix.os.vm }}
     container: ${{ matrix.os.container }}
