@@ -87,7 +87,7 @@ jobs:
       matrix: ${{ steps.provide_versions.outputs.matrix }}
 
   ci:
-    timeout-minutes: 45
+    timeout-minutes: 60
     needs: provide_version_matrix
     runs-on: ${{ matrix.os.vm }}
     container: ${{ matrix.os.container }}
@@ -104,8 +104,8 @@ jobs:
     strategy:
       matrix:
         os:
-        # GitHub Actions MacOS 13 runner
-        - { vm: macos-13, flavour: macOS }
+        # GitHub Actions MacOS 15 runner
+        - { vm: macos-15-intel, flavour: macOS }
         # Alma Linux 8 Docker image
         - { vm: ubuntu-latest, container: "almalinux:8.10", flavour: redhat }
         # CentOS Stream 9 Docker image
@@ -113,14 +113,14 @@ jobs:
         # Fedora 37 Docker image
         - { vm: ubuntu-latest, container: "fedora:37", flavour: redhat }
         # Fedora 40 Docker image
-        - { vm: ubuntu-latest, container: "fedora:40", flavour: redhat }
+        - { vm: ubuntu-latest, container: "fedora:42", flavour: redhat }
         # Ubuntu 22.04 Docker image
         - { vm: ubuntu-latest, container: "ubuntu:22.04", flavour: debian }
         # Ubuntu Latest (24.04, at time of writing) Docker image
         - { vm: ubuntu-latest, container: "ubuntu:latest", flavour: debian }
-        # Debian Bullseye (11) Docker image
-        - { vm: ubuntu-latest, container: "debian:bullseye", flavour: debian }
-        # At the time of writing, Debian Bookworm (12) Docker image
+        # Debian Bullseye (12) Docker image
+        - { vm: ubuntu-latest, container: "debian:bookworm", flavour: debian }
+        # At the time of writing, Debian Trixie (13) Docker image
         - { vm: ubuntu-latest, container: "debian:stable", flavour: debian }
         branch_or_tag_and_default_wheel: ${{ fromJson(needs.provide_version_matrix.outputs.matrix) }}
       fail-fast: false
