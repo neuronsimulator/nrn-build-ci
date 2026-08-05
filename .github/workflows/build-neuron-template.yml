@@ -95,8 +95,8 @@ jobs:
     env:
       SDK_ROOT: $(xcrun --sdk macosx --show-sdk-path)
       OS_FLAVOUR: ${{matrix.os.flavour}}
-      # min minor supported version of Python
-      MIN_MINOR_PYTHON_VERSION: '9'
+      # min minor supported version of Python (NEURON requires >= 3.10)
+      MIN_MINOR_PYTHON_VERSION: '10'
       # max minor supported version of Python
       MAX_MINOR_PYTHON_VERSION: '14'
       UNPRIVILEGED_USER: runner # User created+used inside Docker containers
