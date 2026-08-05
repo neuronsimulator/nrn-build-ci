@@ -67,9 +67,13 @@ cmake --version
 ${PYTHON} -c 'import os, sys; os.set_blocking(sys.stdout.fileno(), True)'
 
 echo "------- Configuring NEURON -------"
+# Pass both Python_EXECUTABLE (FindPython) and PYTHON_EXECUTABLE (legacy /
+# PythonHelper) so platforms whose /usr/bin/python3 is still 3.9 still configure
+# when NRN_PYTHON points at 3.10+.
 export CMAKE_OPTION="-G Ninja \
  -DNRN_ENABLE_MPI=ON -DNRN_ENABLE_INTERVIEWS=ON \
- -DNRN_ENABLE_CORENEURON=ON -DPYTHON_EXECUTABLE=${PYTHON} \
+ -DNRN_ENABLE_CORENEURON=ON \
+ -DPython_EXECUTABLE=${PYTHON} -DPYTHON_EXECUTABLE=${PYTHON} \
  -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} \
  -DNRN_ENABLE_TESTS=ON -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
  -DCORENRN_ENABLE_OPENMP=${CORENRN_ENABLE_OPENMP:-ON}"

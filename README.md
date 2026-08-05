@@ -5,9 +5,15 @@ This repository hosts [scheduled GitHub Actions workflows](.github/workflows/neu
 The default branch of NEURON (and `neuron-nightly` wheel) is tested every night,
 and the latest tagged release (and corresponding `neuron` wheel) is tested once
 a week.
-At present, Ubuntu 22.04, Ubuntu 24.04, Fedora 37, Fedora 40, CentOS Stream
-9, Alma Linux 8, Debian Bullseye (11), Debian Bookworm (12), macOS 12 and
-macOS 13 are tested.
+At present, Ubuntu 22.04, Ubuntu 24.04, Fedora 37, Fedora 42, CentOS Stream
+9, Alma Linux 8, Debian Bookworm (12), Debian stable, and macOS 15 are among
+the platforms tested (see the workflow matrix for the live list).
+
+NEURON requires **Python ≥ 3.10**. On AlmaLinux 8 and CentOS Stream 9 the
+default `python3` is still 3.9, so the install scripts install **Python 3.11**
+(`python3.11` / `python3.11-devel`; AlmaLinux also enables EPEL) and set
+`NRN_PYTHON` accordingly.
+
 
 The tested distributions are generally configured with the explicit
 name/version of the second-newest version of the distribution at the time,
